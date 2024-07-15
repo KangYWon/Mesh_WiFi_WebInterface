@@ -3,18 +3,23 @@ import React, { useState, useEffect } from 'react';
 import CircularStatic from "components/CircularStatic";
 import Tree from 'react-d3-tree';
 import { setOnMessageCallback } from 'src/api/webSocket.js';
+import Latency from 'src/pages/dashboard/Analytics/Latency.jsx';
+import Throughput from 'src/pages/dashboard/Analytics/Throughput.jsx';
+import NodeMeasurement from './nodeMeasurement';
 
 //import { setOnMessageCallback } from 'src/api/webSocket.js';
 
 const LayerContainer = () => {
     const [treeData, setTreeData] = useState(null);
+    const [nodes, setNodes] = useState([]);
 
     useEffect(() => {
         const handleWebSocketMessage = (message) => {
-            if (message.type === 'nodeData') {
+            if (message.type === 'fetch_node') {
                 //setNodeData(message.data);
                 const transformedData = transformDataForD3(message.data);
                 setTreeData(transformedData);
+                setNodes(message.data);
             }
         };
 
@@ -53,16 +58,6 @@ const LayerContainer = () => {
         nodesData.forEach((node) => {
             const currentNode = nodeMap[node.my_mac];
             const parentNode = nodeMap[node.parent_mac]; // Get parent node from nodeMap
-            // if (node.parent_mac !== '') {
-            //     const parentNode = nodeMap[node.parent_mac];
-            //     if (parentNode) {
-            //         parentNode.children.push(currentNode);
-            //     } else {
-            //         root.children.push(currentNode); // If parent not found, consider as root node
-            //     }
-            // } else {
-            //     root.children.push(currentNode); // If no parent_mac, consider as root node
-            // }
             if (parentNode) {
                 parentNode.children.push(currentNode);
             } else {
@@ -75,7 +70,7 @@ const LayerContainer = () => {
 
     return (
         <div style={{ height: '100vh' }}>
-            <h1>WebSocket Client</h1>
+            <h1>Tree Topology</h1>
             <div id="tree-container" style={{ width: '100%', height: '100%' }}>
                 {treeData ? (
                     <Tree
@@ -90,6 +85,15 @@ const LayerContainer = () => {
                 ) : (
                     <CircularStatic /> 
                 )}
+            </div>
+            <div style={{ width: '100%', height: '50%' }}>
+                <Latency nodes={nodes} /> {/* Latency 컴포넌트에 노드 데이터를 전달 */}
+            </div>
+            <div style={{ width: '100%', height: '50%' }}>
+                <Throughput nodes={nodes} /> {/* Throughput 컴포넌트에 노드 데이터를 전달 */}
+            </div>
+            <div style={{ width: '100%', height: '50%' }}>
+                <NodeMeasurement nodes={nodes} /> {/* nodeMeasurement 컴포넌트에 노드 데이터를 전달 */}
             </div>
         </div>
     );

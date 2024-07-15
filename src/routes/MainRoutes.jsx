@@ -5,7 +5,7 @@ import Loadable from 'components/Loadable';
 import Dashboard from 'layout/Dashboard';
 import { element } from 'prop-types';
 import RegisterDevice from 'pages/dashboard/RegisterDevice';
-import AnalyticsPage from 'pages/dashboard/AnalyticsPage';
+import AnalyticsPage from 'pages/dashboard//Analytics/AnalyticsPage';
 import SettingPage from 'pages/dashboard/Setting';
 import { Analytics } from '@mui/icons-material';
 
