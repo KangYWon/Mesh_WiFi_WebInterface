@@ -15,11 +15,17 @@ const LayerContainer = () => {
 
     useEffect(() => {
         const handleWebSocketMessage = (message) => {
-            if (message.type === 'fetch_node') {
-                //setNodeData(message.data);
-                const transformedData = transformDataForD3(message.data);
-                setTreeData(transformedData);
-                setNodes(message.data);
+            try {
+                if (message.type === 'fetch_node') {
+                    console.log('from fetch_node');
+                    const transformedData = transformDataForD3(message.data);
+                    setTreeData(transformedData);
+                    setNodes(message.data);
+                } else {
+                    console.error('Unexpected message type:', message.type);
+                }
+            } catch (error) {
+                console.error('Error processing WebSocket message:', error);
             }
         };
 
@@ -94,8 +100,8 @@ const LayerContainer = () => {
             </div>
             <div style={{ width: '100%', height: '50%' }}>
                 <NodeMeasurement nodes={nodes} /> {/* nodeMeasurement 컴포넌트에 노드 데이터를 전달 */}
-            </div>
-        </div>
+            </div> 
+         </div>
     );
 };
 

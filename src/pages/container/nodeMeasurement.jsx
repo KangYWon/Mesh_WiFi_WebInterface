@@ -40,10 +40,10 @@ export default function NodeMeasurement({ nodes = [] }) {
     } else if (source.trim() === destination.trim()) {
       setError('Source and Destination should be different nodes');
       return;
-    } else if (!isNodeSeqValid(source, nodes) || !isNodeSeqValid(destination, nodes)) {
-      setError('Source and Destination should be valid node sequences');
-      return;
-    } else {
+    // } else if (!isNodeSeqValid(source, nodes) || !isNodeSeqValid(destination, nodes)) {
+    //   setError('Source and Destination should be valid node sequences');
+    //   return;
+     } else {
       setError('');
     }
     
