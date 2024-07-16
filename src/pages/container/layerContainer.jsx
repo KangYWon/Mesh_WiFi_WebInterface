@@ -2,12 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import CircularStatic from "components/CircularStatic";
 import Tree from 'react-d3-tree';
-import { setOnMessageCallback } from 'src/api/webSocket.js';
-import Latency from 'src/pages/dashboard/Analytics/Latency.jsx';
-import Throughput from 'src/pages/dashboard/Analytics/Throughput.jsx';
+import { setOnMessageCallback } from 'src/api/webSocket.js'; 
+import Latency from 'pages/dashboard/Analytics/Latency';
+import Throughput from 'pages/dashboard/Analytics/Throughput';
 import NodeMeasurement from './nodeMeasurement';
-
-//import { setOnMessageCallback } from 'src/api/webSocket.js';
+import testData from './testData'; // import 하드코딩된 데이터
 
 const LayerContainer = () => {
     const [treeData, setTreeData] = useState(null);
@@ -21,6 +20,7 @@ const LayerContainer = () => {
                     const transformedData = transformDataForD3(message.data);
                     setTreeData(transformedData);
                     setNodes(message.data);
+
                 } else {
                     console.error('Unexpected message type:', message.type);
                 }
@@ -82,7 +82,7 @@ const LayerContainer = () => {
                     <Tree
                         data={treeData}
                         orientation="vertical"
-                        translate={{ x: 50, y: 50 }}
+                        translate={{ x: 100, y: 100 }}
                         nodeSize={{ x: 200, y: 200 }}
                         separation={{ siblings: 1, nonSiblings: 2 }}
                         pathFunc="diagonal"
@@ -92,15 +92,11 @@ const LayerContainer = () => {
                     <CircularStatic /> 
                 )}
             </div>
-            <div style={{ width: '100%', height: '50%' }}>
-                <Latency nodes={nodes} /> {/* Latency 컴포넌트에 노드 데이터를 전달 */}
-            </div>
-            <div style={{ width: '100%', height: '50%' }}>
-                <Throughput nodes={nodes} /> {/* Throughput 컴포넌트에 노드 데이터를 전달 */}
-            </div>
-            <div style={{ width: '100%', height: '50%' }}>
-                <NodeMeasurement nodes={nodes} /> {/* nodeMeasurement 컴포넌트에 노드 데이터를 전달 */}
-            </div> 
+            <div style={{ display: 'none' }}>
+            <Latency nodes={nodes} /> {/* Latency 컴포넌트에 노드 데이터를 전달 */}
+            <Throughput nodes={nodes} /> {/* Throughput 컴포넌트에 노드 데이터를 전달 */}
+            <NodeMeasurement nodes={nodes} /> {/* nodeMeasurement 컴포넌트에 노드 데이터를 전달 */}
+        </div>
          </div>
     );
 };

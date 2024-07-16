@@ -12,7 +12,11 @@ const connectWebSocket = () => {
     // 연결이 열릴 때마다 이벤트 핸들러 등록
     ws.onmessage = handleWebSocketMessage;
     // 초기화 메시지 전송
-    sendMessage('initialize', { source: 0, destination: 0, type: 'initialize' });
+    // 3초 후에 initialize 메시지 전송
+    setTimeout(() => {
+      sendMessage('initialize', { source: 0, destination: 0, type: 'initialize' });
+    }, 1000); // 3000 밀리초 = 3초
+    //sendMessage('initialize', { source: 0, destination: 0, type: 'initialize' });
   };
 
   ws.onerror = (error) => {
@@ -21,11 +25,8 @@ const connectWebSocket = () => {
 
   ws.onclose = () => {
     console.log('WebSocket connection closed');
-    setTimeout(connectWebSocket, 1000); // 1초 후 재연결 시도
+   //setTimeout(connectWebSocket, 1000); // 1초 후 재연결 시도
   };
-
-  // 처음 연결 시에도 이벤트 핸들러 등록
-  ws.onmessage = handleWebSocketMessage;
 };
 
 // WebSocket 메시지를 처리하는 함수

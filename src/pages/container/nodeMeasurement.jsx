@@ -64,13 +64,24 @@ export default function NodeMeasurement({ nodes = [] }) {
       });
   };
 
-  const handleReset = () => {
+  // const handleReset = () => {
+  //   setSource('');
+  //   setDestination('');
+  //   setMeasurementResult(null);
+  //   setLatencyData([]);
+  //   setCurrentMeasurementType(null);
+  //   setError('');
+  // };
+  const handleClearInputs = () => {
     setSource('');
     setDestination('');
+    setError('');
+  };
+
+  const handleClearResults = () => {
     setMeasurementResult(null);
     setLatencyData([]);
     setCurrentMeasurementType(null);
-    setError('');
   };
 
   return (
@@ -129,34 +140,52 @@ export default function NodeMeasurement({ nodes = [] }) {
         </Box>
       )}
 
-      {measurementResult && (
+      {(source || destination) && (
         <Button
           variant="outlined"
-          sx={{ 
+          sx={{
             marginTop: 2,
             color: 'black',
             border: '1px solid black',
             '&:hover': {
-              backgroundColor: 'while',
+              backgroundColor: 'white',
               border: '1px solid blue',
-            }
+            },
           }}
-          onClick={handleReset}
+          onClick={handleClearInputs}
         >
-          Clear
+          Clear Inputs
+        </Button>
+      )}
+
+      {measurementResult && (
+        <Button
+          variant="outlined"
+          sx={{
+            marginTop: 2,
+            color: 'black',
+            border: '1px solid black',
+            '&:hover': {
+              backgroundColor: 'white',
+              border: '1px solid blue',
+            },
+          }}
+          onClick={handleClearResults}
+        >
+          Clear Results
         </Button>
       )}
 
       <Button
         variant="outlined"
-        sx={{ 
+        sx={{
           marginTop: 2,
-          borderColor: 'green', 
-          color: 'green', 
+          borderColor: 'green',
+          color: 'green',
           '&:hover': {
             borderColor: 'darkgreen',
             color: 'darkgreen',
-          }
+          },
         }}
         onClick={() => navigate('/analytics')}
       >
