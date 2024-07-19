@@ -1,77 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import { setOnMessageCallback } from 'src/api/webSocket.js';
+import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
 
-const Throughput = ({ nodes = [] }) => {
+const Throughput = () => {
+  const [nodes, setNodes] = useState([]);
   const [throughputResults, setThroughputResults] = useState([]);
 
   useEffect(() => {
     console.log('Nodes:', nodes); // 디버깅 로그
-    // 노드 데이터가 있을 때만 실행
-    // if (nodes.length > 0) {
-    //     const fetchThroughputData = async () => {
-    //         try {
-    //           // Simulating data received from server
-    //           const throughputDataFromServer = [
-    //             [0, 2, 100, 2],
-    //             [1, 2, 400, 0.1],
-    //             [2, 3, 50, 0.3],
-    //           ];
-      
-    //           // Initialize latency results array
-    //           const initialThroughputResults = Array(nodes.length).fill().map(() => Array(nodes.length).fill('-'));
-      
-    //           // Populate latency results based on fetched data
-    //           throughputDataFromServer.forEach(([source, destination, result, packetLoss]) => {
-    //               initialThroughputResults[source][destination] = { result: `${result} Mbps`, packetLoss: `${packetLoss}% loss` };
-    //               initialThroughputResults[destination][source] = { result: `${result} Mbps`, packetLoss: `${packetLoss}% loss` }; // 반대 방향도 동일한 값 설정
-    //             });
-      
-    //           // Setting throughput results in state
-    //           setThroughputResults(initialThroughputResults);
-    //         } catch (error) {
-    //           console.error('Error fetching throughput data:', error);
-    //         }
-    //       };
-          
-    //       // Call fetchThroughputData when component mounts
-    //       fetchThroughputData();
-    // }
-    // Simulating data fetching from server
+
     const handleWebSocketMessage = (message) => {
-        if (message.type === 'fetch_throughput') {
-          const throughputDataFromServer = message.payload;
-          console.log('Fetched Data:', throughputDataFromServer); // 디버깅 로그
-  
-          if (Array.isArray(throughputDataFromServer)) {
-            // Initialize throughput results array
-            const initialThroughputResults = Array(nodes.length).fill().map(() => Array(nodes.length).fill('-'));
+      console.log('WebSocket Message:', message); // WebSocket 메시지 확인
 
-            // Populate throughput results based on fetched data
-            throughputDataFromServer.forEach(([source_seq, destination_seq, result, loss]) => {
-                if (source_seq < nodes.length && destination_seq < nodes.length) {
-                    initialThroughputResults[source_seq][destination_seq] = { result: `${result} Mbps`, packetLoss: `${loss}% loss` };
-                    initialThroughputResults[destination_seq][source_seq] = { result: `${result} Mbps`, packetLoss: `${loss}% loss` }; // 반대 방향도 동일한 값 설정
-                }
-            });
-
-            // Setting throughput results in state
-            setThroughputResults(initialThroughputResults);
-        } else {
-            console.error('Invalid or empty data received for throughput.');
-        }
-      }
+      if (message.type === 'fetch_node') {
+        const nodeDataFromServer = message.data;
+        console.log('Fetched Node:', nodeDataFromServer); // 받은 데이터 확인
+        setNodes(nodeDataFromServer);
+      
+      } 
     };
-  
-      // WebSocket 메시지 콜백 설정
-      setOnMessageCallback(handleWebSocketMessage);
-  
-      // Clean up on unmount
-      return () => {
-        setOnMessageCallback(null);
-      };
-  }, [nodes]);
 
+    // WebSocket 메시지 콜백 설정
+    setOnMessageCallback(handleWebSocketMessage);
+    // 초기 메시지 전송
+    sendMessage('fetch_node', { type: 'fetch_node' });
+    //sendMessage('fetch_throughput', { type: 'fetch_throughput' });
+    // Clean up on unmount
+    return () => {
+      setOnMessageCallback(null);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleWebSocketMessage = (message) => {
+      console.log('WebSocket Message:', message); // WebSocket 메시지 확인
+
+      if (message.type === 'fetch_throughput') {
+        const throughputDataFromServer = message.data;
+        console.log('Fetched Data:', throughputDataFromServer); // 받은 데이터 확인
+
+        if (Array.isArray(throughputDataFromServer)) {
+          // Initialize throughput results array
+          const initialThroughputResults = Array(nodes.length).fill().map(() => Array(nodes.length).fill('-'));
+
+          // Populate throughput results based on fetched data
+          throughputDataFromServer.forEach(data => {
+            const { source_seq, destination_seq, result, loss } = data;
+            if (source_seq < nodes.length && destination_seq < nodes.length) {
+              initialThroughputResults[source_seq][destination_seq] = { result: `${result.toFixed(2)} Mbps`, loss: `${loss.toFixed(1)}% loss` };
+             }
+          });
+
+          // Setting throughput results in state
+          setThroughputResults(initialThroughputResults);
+        } else {
+          console.error('Invalid or empty data received for throughput.');
+        }
+      } 
+    };
+
+    // WebSocket 메시지 콜백 설정
+    setOnMessageCallback(handleWebSocketMessage);
+    // nodes가 업데이트될 때만 throughput 요청
+    if (nodes.length > 0) {
+      sendMessage('fetch_throughput', { type: 'fetch_throughput' });
+    }
+    return () => {
+      setOnMessageCallback(null);
+    };
+  }, [nodes]);
+  
   const tableStyle = {
     minHeight: '300px',
   };
@@ -97,15 +95,15 @@ const Throughput = ({ nodes = [] }) => {
   return (
     <Grid item xs={12}>
       <Paper elevation={3} style={{ padding: '20px', ...tableStyle }}>
-        <Typography variant="h6" gutterBottom align="center">
+        <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold', fontSize: '1.0rem' }} >
           Throughput 측정 결과
         </Typography>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell sx={cellStyle}></TableCell>
-              {nodes.map((node) => (
-                <TableCell key={node.seq} sx={cellStyle}>
+              {nodes.map((node, index) => (
+                <TableCell key={index} sx={cellStyle}>
                   Node {node.seq}
                 </TableCell>
               ))}
@@ -113,7 +111,7 @@ const Throughput = ({ nodes = [] }) => {
           </TableHead>
           <TableBody>
             {nodes.map((node, rowIndex) => (
-              <TableRow key={node.seq}>
+              <TableRow key={rowIndex}>
                 <TableCell sx={cellStyle}>
                   Node {node.seq}
                 </TableCell>
@@ -121,12 +119,12 @@ const Throughput = ({ nodes = [] }) => {
                   const resultCell = throughputResults[rowIndex]?.[colIndex];
                   return (
                     <TableCell key={colIndex} sx={{ ...cellStyle, backgroundColor: getBackgroundColor(rowIndex, colIndex) }}>
-                        {resultCell !== '-' && resultCell ? (
-                            <span>
-                                {`${resultCell.result}`} <br/>
-                                {`${resultCell.packetLoss}`}
-                            </span>
-                            ) : '-'}
+                      {resultCell !== '-' && resultCell ? (
+                        <span>
+                          {`${resultCell.result}`} <br/>
+                          {`${resultCell.loss}`}
+                        </span>
+                      ) : '-'}
                     </TableCell>
                   );
                 })}
@@ -138,5 +136,6 @@ const Throughput = ({ nodes = [] }) => {
     </Grid>
   );
 };
+
 
 export default Throughput;

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Grid, TextField, Button, Typography, Table, TableBody, TableCell, TableHead, TableRow, IconButton, Alert, Paper } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
-import { fetchDevices, createDevice, deleteDevice } from '/src/api/api'
-
+import { sendMessage } from 'src/api/webSocket.js'; 
 
 const RegisterDevice = () => {
   const [devices, setDevices] = useState([]);
@@ -12,7 +11,7 @@ const RegisterDevice = () => {
 
   useEffect(() => {
     // 페이지 로드 시 기존 장치 데이터를 서버에서 가져옵니다.
-    fetchDevices()
+    sendMessage('fetch_devices')
       .then(data => {
         setDevices(data);
       })
@@ -27,7 +26,7 @@ const RegisterDevice = () => {
       setError('MAC 주소를 입력해 주세요.');
       return;
     }
-    createDevice(newDeviceMac)
+    sendMessage('create_device', { mac: newDeviceMac })
       .then(newDevice => {
         setDevices([...devices, newDevice]);
         setNewDeviceMac('');
@@ -40,7 +39,7 @@ const RegisterDevice = () => {
   };
 
   const handleDeleteDevice = (id) => {
-    deleteDevice(id)
+    sendMessage('delete_device', { id })
       .then(() => {
         setDevices(devices.filter(device => device.id !== id));
       })

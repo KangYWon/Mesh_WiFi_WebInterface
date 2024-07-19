@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import LatencyChart from 'src/components/Chart.jsx'; 
 import { Typography } from '@mui/material';
-import { connectWebSocket, setOnMessageCallback } from 'src/api/webSocket.js';
+import { setOnMessageCallback } from 'src/api/webSocket.js';
 
 const LatencyChartPage = () => {
   const [latencyData, setLatencyData] = useState([]);
@@ -11,18 +10,32 @@ const LatencyChartPage = () => {
 
   useEffect(() => {
     setOnMessageCallback((message) => {
-      if (message.type === 'latency') {
-        const data = message.payload.data;
-        setLatencyData(data);
+      try {
+        const { type, data } = message;
         
-        // 수신한 데이터의 평균값을 계산하여 설정
-        const avg = calculateAverage(data);
-        setMeasurementResult({ type: 'Latency', value: avg });
+        if (type === 'latency') {
+          const result = data.result;
+          setLatencyData(prevData => {
+            const updatedData = [...prevData, parseFloat(result)];
+
+            // 최대 20개의 데이터만 유지
+            // if (updatedData.length > 20) {
+            //   updatedData.splice(0, updatedData.length - 20);
+            // }
+
+            // 평균 계산
+            const avg = calculateAverage(updatedData);
+            setMeasurementResult({ type: 'Latency', value: avg });
+
+            return updatedData;
+          });
+        } else {
+          console.error('Unexpected message type:', type);
+        }
+      } catch (error) {
+        console.error('Error processing WebSocket message:', error);
       }
     });
-
-    // const randomData = Array.from({ length: 20 }, () => Math.random() * 100);
-    // setLatencyData(randomData);
   }, []);
 
   // 배열의 평균 계산 함수
@@ -39,7 +52,7 @@ const LatencyChartPage = () => {
       </Typography>
 
       <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray' }}>
-      <h2>Latency Chart</h2>
+        <Typography variant="h6">Latency Chart</Typography>
         <LatencyChart data={latencyData} />
       </Box>
 
@@ -51,19 +64,6 @@ const LatencyChartPage = () => {
           </Typography>
         </Box>
       )}
-
-      {/* <Button
-        variant="contained"
-        onClick={() => {
-          // 재생성 버튼 클릭 시 새로운 랜덤 데이터 생성 및 결과 업데이트
-          const randomData = Array.from({ length: 20 }, () => Math.random() * 100);
-          setLatencyData(randomData);
-          const avg = calculateAverage(randomData);
-          setMeasurementResult({ type: 'Latency', value: avg });
-        }}
-      >
-        Generate New Data
-      </Button> */}
     </Box>
   );
 };

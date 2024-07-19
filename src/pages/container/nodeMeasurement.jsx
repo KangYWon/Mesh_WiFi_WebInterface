@@ -6,31 +6,68 @@ import LatencyChartPage  from 'src/pages/dashboard/Analytics/latencyChartPage.js
 import { useNavigate } from 'react-router-dom';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
 
-export default function NodeMeasurement({ nodes = [] }) {
+export default function NodeMeasurement({ }) {
+  const [nodes, setNodes] = useState([]);
   const [source, setSource] = useState('');
   const [destination, setDestination] = useState('');
   const [measurementResult, setMeasurementResult] = useState(null);
-  const [latencyData, setLatencyData] = useState([]);
   const [currentMeasurementType, setCurrentMeasurementType] = useState(null);
+  const [measurementRequested, setMeasurementRequested] = useState(false);
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
+  //clear result의 경우 서버쪽으로 send 그만 정보 보내라는 요청으로 로직 고민해보기. 
 
   useEffect(() => {
-    // 웹소켓 연결 설정 및 메시지 처리
+    console.log('Nodes:', nodes); // 디버깅 로그
+
+    const handleWebSocketMessage = (message) => {
+      console.log('WebSocket Message:', message); // WebSocket 메시지 확인
+
+      if (message.type === 'fetch_node') {
+        const nodeDataFromServer = message.data;
+        console.log('Fetched Node:', nodeDataFromServer); // 받은 데이터 확인
+        setNodes(nodeDataFromServer);
+      
+      } 
+    };
+    // WebSocket 메시지 콜백 설정
+    setOnMessageCallback(handleWebSocketMessage);
+    // 초기 메시지 전송
+    sendMessage('fetch_node', { type: 'fetch_node' });
+    return () => {
+      setOnMessageCallback(null);
+    };
+  }, []);
+
+  useEffect(() => {
     setOnMessageCallback((message) => {
-        const { type, value } = message;
-        const unit = type === 'latency' ? 'ms' : 'Mbps';
-        setMeasurementResult({ type, value: `${value} ${unit}` });
+      try {
+        const { type, data } = message;
 
+        if (measurementRequested) { // 측정 요청이 있을 때만 결과 처리
+          if (type === 'latency') {
+            const { result } = data;
+            // latency 데이터 업데이트
+            setMeasurementResult({ type: 'Latency', value: result });
+          } else if (type === 'throughput') {
+            const { result, loss } = data;
+            // throughput 데이터 업데이트
+            setMeasurementResult({ 
+              type: 'Throughput', 
+              result: `${result.toFixed(2)} Mbps`, 
+              loss: `${loss.toFixed(1)}% loss` 
+            });
+          } else {
+            console.error('Unexpected message type:', type);
+          }
+          setMeasurementRequested(false); // 결과 처리 후 다시 false로 설정
+        }
+      } catch (error) {
+        console.error('Error processing WebSocket message:', error);
+      }
     });
-  }, []); // 빈 배열로 설정하여 컴포넌트가 처음 마운트될 때만 실행
-  //}, [source, destination]); // sourceNode, destinationNode가 변경될 때마다 연결을 재설정
-
-  const isNodeSeqValid = (value, nodes) => {
-    const nodeSeqs = nodes.map(node => node.seq);
-    return nodeSeqs.includes(parseInt(value));
-  };
+  }, [measurementRequested]); // measurementRequested를 의존성 배열에 추가
 
   const handleMeasurement = (type) => {
     // 입력값 유효성 검사
@@ -40,38 +77,26 @@ export default function NodeMeasurement({ nodes = [] }) {
     } else if (source.trim() === destination.trim()) {
       setError('Source and Destination should be different nodes');
       return;
-    // } else if (!isNodeSeqValid(source, nodes) || !isNodeSeqValid(destination, nodes)) {
-    //   setError('Source and Destination should be valid node sequences');
-    //   return;
-     } else {
-      setError('');
-    }
-    
+    } else if (!isNodeSeqValid(parseInt(source), nodes) || !isNodeSeqValid(parseInt(destination), nodes)) {
+      setError('Source and Destination should be valid node sequences');
+      return;
+    } else {
+    setError('');
+    } 
     setCurrentMeasurementType(type); // 측정 유형 설정
-    sendMessage(type.toLowerCase(), { source, destination })
-      .then(response => {
-        // 웹소켓 응답 처리 (예시)
-        const { type, value } = response;
-        const unit = type === 'latency' ? 'ms' : 'Mbps';
-        setMeasurementResult({ type, value: `${value} ${unit}` });
+    setMeasurementRequested(true); // 측정 요청 상태를 true로 설정
 
-        if (type === 'latency') {
-          setLatencyData(prevData => [...prevData, parseFloat(value)]);
-        }
-      })
+    sendMessage(type.toLowerCase(), { source, destination })
       .catch(error => {
         console.error('Error sending WebSocket message:', error);
+        setMeasurementRequested(false); // 에러 발생 시 false로 재설정
       });
   };
 
-  // const handleReset = () => {
-  //   setSource('');
-  //   setDestination('');
-  //   setMeasurementResult(null);
-  //   setLatencyData([]);
-  //   setCurrentMeasurementType(null);
-  //   setError('');
-  // };
+  const isNodeSeqValid = (value, nodes) => {
+    return value >= 0 && value < nodes.length;
+  };
+
   const handleClearInputs = () => {
     setSource('');
     setDestination('');
@@ -80,12 +105,15 @@ export default function NodeMeasurement({ nodes = [] }) {
 
   const handleClearResults = () => {
     setMeasurementResult(null);
-    setLatencyData([]);
     setCurrentMeasurementType(null);
+    setSource('');
+    setDestination('');
+    setError('');
+    setMeasurementRequested(false); // 결과 삭제 시 측정 요청 상태도 초기화
   };
 
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', borderLeft: '1px solid #ccc', borderBottom: '1px solid #ccc', paddingLeft: '16px' }}>
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '16px' }}>
       <h2>Node Measurement</h2>
       <TextField
         label="Source Node"
@@ -98,6 +126,7 @@ export default function NodeMeasurement({ nodes = [] }) {
         margin="normal"
         error={!!error}
         helperText={error}
+        disabled={!!measurementResult} // 결과가 있으면 비활성화
       />
       <TextField
         label="Destination Node"
@@ -110,6 +139,7 @@ export default function NodeMeasurement({ nodes = [] }) {
         margin="normal"
         error={!!error}
         helperText={error}
+        disabled={!!measurementResult} // 결과가 있으면 비활성화
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
         <Button variant="contained" sx={{ backgroundColor: 'green', color: 'white', '&:hover': { backgroundColor: 'darkgreen' } }} 
@@ -129,18 +159,14 @@ export default function NodeMeasurement({ nodes = [] }) {
             Source Node [{source}] ➔ Destination Node [{destination}]
           </p>
           {currentMeasurementType === 'Latency' ? (
-            <>
-              {/* <LatencyChart data={latencyData} />
-              <p>[{measurementResult.type}] : {measurementResult.value.avg}</p> */}
-              <LatencyChartPage />
-            </>
+            <LatencyChartPage latencyData={measurementResult.value} />
           ) : (
-            <p>[{measurementResult.type}] : {measurementResult.value}</p>
+            <p>[{measurementResult.type}] : {measurementResult.result} ({measurementResult.loss})</p>
           )}
         </Box>
       )}
 
-      {(source || destination) && (
+      {(source || destination) && !measurementResult && (
         <Button
           variant="outlined"
           sx={{

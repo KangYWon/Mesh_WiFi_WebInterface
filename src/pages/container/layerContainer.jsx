@@ -1,16 +1,11 @@
 // LayerContainer.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import CircularStatic from "components/CircularStatic";
 import Tree from 'react-d3-tree';
-import { setOnMessageCallback } from 'src/api/webSocket.js'; 
-import Latency from 'pages/dashboard/Analytics/Latency';
-import Throughput from 'pages/dashboard/Analytics/Throughput';
-import NodeMeasurement from './nodeMeasurement';
-import testData from './testData'; // import 하드코딩된 데이터
+import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js'; 
 
 const LayerContainer = () => {
     const [treeData, setTreeData] = useState(null);
-    const [nodes, setNodes] = useState([]);
 
     useEffect(() => {
         const handleWebSocketMessage = (message) => {
@@ -19,11 +14,7 @@ const LayerContainer = () => {
                     console.log('from fetch_node');
                     const transformedData = transformDataForD3(message.data);
                     setTreeData(transformedData);
-                    setNodes(message.data);
-
-                } else {
-                    console.error('Unexpected message type:', message.type);
-                }
+                } 
             } catch (error) {
                 console.error('Error processing WebSocket message:', error);
             }
@@ -31,6 +22,8 @@ const LayerContainer = () => {
 
         // WebSocket 메시지 핸들러 설정
         setOnMessageCallback(handleWebSocketMessage);
+        // WebSocket 연결이 열리면 초기화 메시지를 보냅니다.
+        sendMessage('fetch_node', { type: 'fetch_node' });
 
         // Cleanup function for useEffect
         return () => {
@@ -75,30 +68,28 @@ const LayerContainer = () => {
     };
 
     return (
-        <div style={{ height: '100vh' }}>
-            <h1>Tree Topology</h1>
-            <div id="tree-container" style={{ width: '100%', height: '100%' }}>
-                {treeData ? (
-                    <Tree
-                        data={treeData}
-                        orientation="vertical"
-                        translate={{ x: 100, y: 100 }}
-                        nodeSize={{ x: 200, y: 200 }}
-                        separation={{ siblings: 1, nonSiblings: 2 }}
-                        pathFunc="diagonal"
-                        shouldCollapseNeighborNodes={true}
-                    />
-                ) : (
+        <div style={{ height: '100vh', position: 'relative' }}>
+          <h1 style={{ position: 'absolute', left: '30px' }}>Tree Topology</h1>
+          <div id="tree-container" style={{ width: '100%', height: '100%' }}>
+            {treeData ? (
+              <Tree
+                data={treeData}
+                orientation="vertical"
+                translate={{ x: 150, y: 100 }}
+                nodeSize={{ x: 200, y: 200 }}
+                separation={{ siblings: 1, nonSiblings: 2 }}
+                pathFunc="diagonal"
+                shouldCollapseNeighborNodes={true}
+              />
+            ) : (
+                <div style={{ position: 'absolute', top: '10%', left: '10%'}}>
                     <CircularStatic /> 
-                )}
-            </div>
-            <div style={{ display: 'none' }}>
-            <Latency nodes={nodes} /> {/* Latency 컴포넌트에 노드 데이터를 전달 */}
-            <Throughput nodes={nodes} /> {/* Throughput 컴포넌트에 노드 데이터를 전달 */}
-            <NodeMeasurement nodes={nodes} /> {/* nodeMeasurement 컴포넌트에 노드 데이터를 전달 */}
+                </div>
+            )}
+          </div> 
         </div>
-         </div>
     );
 };
+
 
 export default LayerContainer;

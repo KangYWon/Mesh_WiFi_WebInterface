@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Container} from '@mui/material';
+import { Container, Grid, Paper } from '@mui/material';
 
 // material-ui
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -18,12 +18,16 @@ import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
 
 // import the new containers
 import NodeMeasurement from 'src/pages/container/nodeMeasurement.jsx';
-import LayerContainer from 'src/pages/container/layerContainerTest.jsx';
+import LayerContainer from 'src/pages/container/layerContainer.jsx';
 import MapContainer from 'src/pages/container/mapContainer.jsx';
 import { borderBottom } from '@mui/system';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
+/**
+ * 
+ * 하얀 바탕, 
+ */
 export default function DashboardLayout() {
   const { menuMasterLoading } = useGetMenuMaster();
   const downXL = useMediaQuery((theme) => theme.breakpoints.down('xl'));
@@ -36,23 +40,26 @@ export default function DashboardLayout() {
   if (menuMasterLoading) return <Loader />;
 
   return (
-    <Container maxWidth="xl" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', minHeight: '100vh' }}>
+    <Container maxWidth="xl" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', minHeight: '110vh' }}>
       <Header />
       <Drawer />
       <Box sx={{ display: 'flex', width: '100%', height: '100vh' }}>
         <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', marginTop: '-70px' }}>
           <Toolbar />
           <Breadcrumbs navigation={navigation} title />
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'row', height: '100%' }}>
-              <Box sx={{ flex: 1.3, display: 'flex', flexDirection: 'column', marginRight: '16px' }}>
-                <MapContainer style={{ width: '100%', height: '100%' }} />
-                {/* MapContainer에 스타일 추가 */}
-                <NodeMeasurement style={{ width: '100%', height: '50%' }}/>
-              </Box>
-              <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', borderLeft: '1px solid #ccc', paddingLeft: '16px' }}>
-                <LayerContainer style={{ width: '100%', height: '100%' }} />
-              </Box>
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'row', height: '100%' }}>
+            <Box sx={{ flex: 1.3, display: 'flex', flexDirection: 'column', marginRight: '16px' }}>
+              <MapContainer style={{ width: '100%', height: '50%' }} />
+              <Paper elevation={5} style={{ height: '50%', marginTop: '16px', padding: '16px' }}>
+                <NodeMeasurement style={{ width: '100%', height: '100%' }} />
+              </Paper>
             </Box>
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '16px', borderLeft: '1px solid #ccc' }}>
+              <Paper elevation={5} style={{ height: 'calc(100%)', padding: '16px' }}>
+                <LayerContainer style={{ width: '100%', height: '100%' }} />
+              </Paper>
+            </Box>
+          </Box>
           <Outlet />
         </Box>
       </Box>

@@ -1,71 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Paper, Typography, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import { setOnMessageCallback } from 'src/api/webSocket.js';
+import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
 
-const Latency = ({ nodes = [] }) => { // nodes에 기본값을 임의의 데이터로 설정
+const Latency = () => { 
+  const [nodes, setNodes] = useState([]);
   const [latencyResults, setLatencyResults] = useState([]);
 
   useEffect(() => {
     console.log('Nodes:', nodes); // 디버깅 로그
-    // 노드 데이터가 있을 때만 실행
-    // if (nodes.length > 0) {
-    //   // Simulating data fetching from server
-    //   const fetchLatencyData = async () => {
-    //     try {
-    //       // Simulating data received from server
-    //       const latencyDataFromServer = [
-    //         [0, 1, 30],   // Latency results for Node 0 to Node 1
-    //         [1, 2, 35],   // Latency results for Node 1 to Node 2
-    //         [2, 3, 38],   // Latency results for Node 0 to Node 2
-    //       ];
-    //       console.log('Fetched Latency Data:', latencyDataFromServer); // 디버깅 로그
-
-    //       // Initialize latency results array
-    //       const initialLatencyResults = Array(nodes.length).fill().map(() => Array(nodes.length).fill('-'));
-
-    //       // Populate latency results based on fetched data
-    //       latencyDataFromServer.forEach(([source, destination, result]) => {
-    //         initialLatencyResults[source][destination] = result;
-    //         initialLatencyResults[destination][source] = result; // 반대 방향도 동일한 값 설정
-    //       });
-
-    //       // Setting latency results in state
-    //       setLatencyResults(initialLatencyResults);
-    //     } catch (error) {
-    //       console.error('Error fetching latency data:', error);
-    //     }
-    //   };
-
-    //   // Call fetchLatencyData when nodes are available
-    //   fetchLatencyData();
-    // }
+  
     const handleWebSocketMessage = (message) => {
+      console.log('WebSocket Message:', message);
+
       if (message.type === 'fetch_latency') {
-        //const latencyDataFromServer = message.payload;
+        const latencyDataFromServer = message.data;
         console.log('Fetched Data:', latencyDataFromServer); // 디버깅 로그
 
-        // Initialize latnecy results array
-        const initialLatencyResults = Array(nodes.length).fill().map(() => Array(nodes.length).fill('-'));
-
-        // Populate latnecy results based on fetched data
-        latencyDataFromServer.forEach(([source, destination, result, packetLoss]) => {
-            initialLatencyResults[source][destination] = result;
-            initialLatencyResults[destination][source] = result; // 반대 방향도 동일한 값 설정
+        if (Array.isArray(latencyDataFromServer)){
+          // Initialize latnecy results array
+          const initialLatencyResults = Array(nodes.length).fill().map(() => Array(nodes.length).fill('-'));
+          
+          // Populate latnecy results based on fetched data
+          latencyDataFromServer.forEach (data => {
+            const { source_seq, destination_seq, result } = data;
+            if (source_seq < nodes.length && destination_seq < nodes.length) {
+              initialLatencyResults[source_seq][destination_seq] = `${result.toFixed(2)} ms`;
+            }
           });
+          // Setting latnecy results in state
+          setLatencyResults(initialLatencyResults);
+        } else {
+          console.error('Invalid or empty data received for throughput.');
+        }
+      } else if (message.type === 'fetch_node') {
+        const nodeDataFromServer = message.data;
+        console.log('Fetched Node Data:', nodeDataFromServer); // 받은 노드 데이터 확인
 
-        // Setting latnecy results in state
-        setLatencyResults(initialLatencyResults);
+        if (Array.isArray(nodeDataFromServer)) {
+          setNodes(nodeDataFromServer);
+        } else {
+          console.error('Invalid or empty data received for nodes.');
+        }
       }
     };
 
     // WebSocket 메시지 콜백 설정
     setOnMessageCallback(handleWebSocketMessage);
+    sendMessage('fetch_latency', { type: 'fetch_latency' });
 
     // Clean up on unmount
     return () => {
       setOnMessageCallback(null);
     };
-  }, [nodes]); // nodes가 변경될 때마다 실행
+  }, [nodes]); 
 
   const tableStyle = {
     minHeight: '300px',
@@ -79,10 +66,10 @@ const Latency = ({ nodes = [] }) => { // nodes에 기본값을 임의의 데이�
     backgroundColor: '#fff',
   };
 
-  const getBackgroundColor = (source, destination) => {
-    if (source === destination) {
+  const getBackgroundColor = (source_seq, destination_seq) => {
+    if (source_seq === destination_seq) {
       return ''; // 자기 자신인 경우 색상 없음
-    } else if (source < destination && latencyResults[source]?.[destination] !== '-') {
+    } else if (source_seq < destination_seq && latencyResults[source_seq]?.[destination_seq] !== '-') {
       return 'rgba(255, 255, 0, 0.1)'; // 대각선 위의 부분에 노란색 적용
     } else {
       return ''; // 대각선 아래의 부분에는 색상 없음
@@ -97,16 +84,16 @@ const Latency = ({ nodes = [] }) => { // nodes에 기본값을 임의의 데이�
 
   return (
     <Grid item xs={12}>
-      <Paper elevation={3} style={{ padding: '20px', ...tableStyle }}>
-        <Typography variant="h6" gutterBottom align="center">
+      <Paper elevation={3} style={{ padding: '20px', ...tableStyle, display: 'flex', flexDirection: 'column' }}>
+        <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold', fontSize: '1.0rem' }} >
           Latency 측정 결과
         </Typography>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell sx={cellStyle}></TableCell>
-              {nodes.map((node) => (
-                <TableCell key={node.seq} sx={cellStyle}>
+              {nodes.map((node, index) => (
+                <TableCell key={index} sx={cellStyle}>
                   Node {node.seq}
                 </TableCell>
               ))}
@@ -114,21 +101,29 @@ const Latency = ({ nodes = [] }) => { // nodes에 기본값을 임의의 데이�
           </TableHead>
           <TableBody>
             {nodes.map((node, rowIndex) => (
-              <TableRow key={node.seq}>
+              <TableRow key={rowIndex}>
                 <TableCell sx={cellStyle}>
                   Node {node.seq}
                 </TableCell>
-                {nodes.map((_, colIndex) => (
-                  <TableCell key={colIndex} sx={{ ...cellStyle, backgroundColor: getBackgroundColor(rowIndex, colIndex) }}>
-                    {latencyResults[rowIndex] && latencyResults[rowIndex][colIndex] !== '-' 
-                      ? `${latencyResults[rowIndex][colIndex]} ms` 
-                      : '-'}
-                  </TableCell>
-                ))}
+                {nodes.map((_, colIndex) => {
+                  const resultCell = latencyResults[rowIndex]?.[colIndex];
+                  return (
+                    <TableCell key={colIndex} sx={{ ...cellStyle, backgroundColor: getBackgroundColor(rowIndex, colIndex) }}>
+                      {resultCell !== '-' && resultCell ? (
+                        <span>
+                          {`${resultCell}`}
+                        </span>
+                      ) : '-'}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        <Typography variant="body2" sx={{ alignSelf: 'flex-end', marginTop: 'auto' }}>
+          ※Latency표 측정값은 20개 평균 값이다.※
+        </Typography>
       </Paper>
     </Grid>
   );
