@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import LatencyChart from 'src/components/LatencyChart.jsx'; 
+import ThroughputChart from 'src/components/ThroughputChart.jsx'; 
 import { Typography } from '@mui/material';
 import { setOnMessageCallback } from 'src/api/webSocket.js';
 
-const LatencyChartPage = () => {
-  const [latencyData, setLatencyData] = useState([]);
+const ThroughputChartPage = () => {
+  const [throughputData, setthroughputData] = useState([]);
   const [measurementResult, setMeasurementResult] = useState(null);
   const chartRef = useRef(null); // 레이아웃 업데이트를 위한 ref
 
@@ -14,14 +14,10 @@ const LatencyChartPage = () => {
       try {
         const { type, data } = message;
         
-        if (type === 'latency') {
+        if (type === 'throughput') {
           const result = data.result;
           setLatencyData(prevData => {
             const updatedData = [...prevData, parseFloat(result)];
-
-            // 평균 계산
-            const avg = calculateAverage(updatedData);
-            setMeasurementResult({ type: 'Latency', value: avg });
 
             return updatedData;
           });
@@ -34,29 +30,16 @@ const LatencyChartPage = () => {
     });
   }, []);
 
-  // 배열의 평균 계산 함수
-  const calculateAverage = (data) => {
-    if (data.length === 0) return 0;
-    const sum = data.reduce((acc, curr) => acc + curr, 0);
-    return sum / data.length;
-  };
-
   return (
     <Box sx={{ padding: '20px' }}>
       <Typography variant="h4" gutterBottom>
-        Latency Test Page
+        Throughput Test Page
       </Typography>
 
       <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray' }}>
-        <Typography variant="h6">Latency Chart</Typography>
-        <LatencyChart data={latencyData} />
+        <Typography variant="h6">Throughput Chart</Typography>
+        <ThroughputChart data={throughputData} />
       </Box>
-      {/* <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray', width: '100%', height: '400px' }}>
-        <Typography variant="h6">Latency Chart</Typography>
-        <Box ref={chartRef} sx={{ width: '100%', height: '100%' }}>
-          <LatencyChart data={latencyData} />
-        </Box>
-      </Box> */}
 
       {measurementResult && (
         <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray' }}>
@@ -70,4 +53,4 @@ const LatencyChartPage = () => {
   );
 };
 
-export default LatencyChartPage;
+export default ThroughputChartPage;

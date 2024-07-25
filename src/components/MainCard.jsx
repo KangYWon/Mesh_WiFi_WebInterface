@@ -1,6 +1,3 @@
-/**
- * Material-UI의 card 컴포넌트를 확장하여 사용자 정의 스타일 및 기능을 추가한 것으로 보임. 
- */
 import PropTypes from 'prop-types';
 import { forwardRef } from 'react';
 

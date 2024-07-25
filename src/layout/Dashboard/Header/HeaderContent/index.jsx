@@ -2,9 +2,6 @@
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 
-// project import
-
-
 // ==============================|| HEADER - CONTENT ||============================== //
 
 export default function HeaderContent() {

@@ -14,7 +14,7 @@ const storage = {
     children: [
         {
             id: 'device',
-            title: 'Device',
+            title: 'Device On/Off',
             type: 'item',
             url: '/register',
             icon: icons.ProfileOutlined,

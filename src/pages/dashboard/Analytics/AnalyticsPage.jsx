@@ -15,7 +15,7 @@ const AnalyticsPage = () => {
     //coordinates: [36.1, 129.4],
     latitude: 36.1 + (index * 0.001), // Slightly adjust latitude for each node
     longitude: 129.4 + (index * 0.001), 
-    layer: Math.floor(Math.random() * 3) + 1
+    layer: Math.floor(Math.random() * 11) + 1
   })));
   const [throughputResults, setThroughputResults] = useState(Array.from({ length: 10 }, () => Array.from({ length: 7 }, () => '-')));
   const [latencyResults, setLatencyResults] = useState(Array.from({ length: 10 }, () => Array.from({ length: 7 }, () => '-')));

@@ -12,39 +12,38 @@ import MainCard from 'components/MainCard';
 
 export default function Breadcrumbs({ navigation, title, ...others }) {
   const location = useLocation();
-  const [main, setMain] = useState();
-  const [item, setItem] = useState();
+  const [main, setMain] = useState(null);
+  const [item, setItem] = useState(null);
 
   // set active item state
   const getCollapse = (menu) => {
     if (menu.children) {
-      menu.children.filter((collapse) => {
-        if (collapse.type && collapse.type === 'collapse') {
+      menu.children.forEach((collapse) => {
+        if (collapse.type === 'collapse') {
           getCollapse(collapse);
-        } else if (collapse.type && collapse.type === 'item') {
-          if (location.pathname === collapse.url) {
-            setMain(menu);
-            setItem(collapse);
-          }
+        } else if (collapse.type === 'item' && location.pathname === collapse.url) {
+          setMain(menu);
+          setItem(collapse);
         }
-        return false;
       });
     }
   };
 
   useEffect(() => {
-    navigation?.items?.map((menu) => {
-      if (menu.type && menu.type === 'group') {
-        getCollapse(menu);
-      }
-      return false;
-    });
-  });
+    if (navigation?.items) {
+      navigation.items.forEach((menu) => {
+        if (menu.type === 'group') {
+          getCollapse(menu);
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
-  // only used for component demo breadcrumbs
-  if (location.pathname === '/breadcrumbs') {
-    location.pathname = '/dashboard/analytics';
-  }
+  const handleHomeClick = () => {
+    setMain(null); // 상태 리셋
+    setItem(null); // 상태 리셋
+  };
 
   let mainContent;
   let itemContent;
@@ -54,7 +53,13 @@ export default function Breadcrumbs({ navigation, title, ...others }) {
   // collapse item
   if (main && main.type === 'collapse') {
     mainContent = (
-      <Typography component={Link} to={document.location.pathname} variant="h6" sx={{ textDecoration: 'none' }} color="textSecondary">
+      <Typography
+        component={Link}
+        to={main.url || '/'}
+        variant="h6"
+        sx={{ textDecoration: 'none' }}
+        color="textSecondary"
+      >
         {main.title}
       </Typography>
     );
@@ -69,14 +74,20 @@ export default function Breadcrumbs({ navigation, title, ...others }) {
       </Typography>
     );
 
-    // main
     if (item.breadcrumbs !== false) {
       breadcrumbContent = (
         <MainCard border={false} sx={{ mb: 3, bgcolor: 'transparent' }} {...others} content={false}>
           <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
             <Grid item>
               <MuiBreadcrumbs aria-label="breadcrumb">
-                <Typography component={Link} to="/" color="textSecondary" variant="h6" sx={{ textDecoration: 'none' }}>
+                <Typography
+                  component={Link}
+                  to="/"
+                  color="textSecondary"
+                  variant="h6"
+                  sx={{ textDecoration: 'none' }}
+                  onClick={handleHomeClick} // 링크 클릭 시 상태 리셋
+                >
                   Home
                 </Typography>
                 {mainContent}

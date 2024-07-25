@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Container, Grid, Paper } from '@mui/material';
-
-// material-ui
+import { Container, Paper } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
@@ -10,7 +8,7 @@ import Box from '@mui/material/Box';
 // project import
 import Drawer from 'src/layout/Dashboard/Drawer';
 import Header from 'src/layout/Dashboard/Header';
-import navigation from 'menu-items';
+import navigation from 'src/layout/Dashboard/Drawer/menu-items';
 import Loader from 'components/Loader';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
@@ -20,14 +18,10 @@ import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
 import NodeMeasurement from 'src/pages/container/nodeMeasurement.jsx';
 import LayerContainer from 'src/pages/container/layerContainer.jsx';
 import MapContainer from 'src/pages/container/mapContainer.jsx';
-import { borderBottom } from '@mui/system';
+import SplitPane from 'react-split-pane';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
-/**
- * 
- * 하얀 바탕, 
- */
 export default function DashboardLayout() {
   const { menuMasterLoading } = useGetMenuMaster();
   const downXL = useMediaQuery((theme) => theme.breakpoints.down('xl'));
@@ -40,25 +34,41 @@ export default function DashboardLayout() {
   if (menuMasterLoading) return <Loader />;
 
   return (
-    <Container maxWidth="xl" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', minHeight: '110vh' }}>
+    <Container maxWidth="xl" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', minHeight: '100vh' }}>
       <Header />
       <Drawer />
-      <Box sx={{ display: 'flex', width: '100%', height: '100vh' }}>
-        <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', marginTop: '-70px' }}>
+      <Box sx={{ display: 'flex', width: '100%', minHeight: '100vh' }}>
+        <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', mt: '-70px' }}>
           <Toolbar />
-          <Breadcrumbs navigation={navigation} title />
+         
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'row', height: '100%' }}>
-            <Box sx={{ flex: 1.3, display: 'flex', flexDirection: 'column', marginRight: '16px' }}>
-              <MapContainer style={{ width: '100%', height: '50%' }} />
-              <Paper elevation={5} style={{ height: '50%', marginTop: '16px', padding: '16px' }}>
-                <NodeMeasurement style={{ width: '100%', height: '100%' }} />
-              </Paper>
-            </Box>
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '16px', borderLeft: '1px solid #ccc' }}>
-              <Paper elevation={5} style={{ height: 'calc(100%)', padding: '16px' }}>
-                <LayerContainer style={{ width: '100%', height: '100%' }} />
-              </Paper>
-            </Box>
+            <SplitPane
+              split="vertical"
+              minSize={100}
+              maxSize={-100}
+              defaultSize="50%"
+              style={{ position: 'relative', height: '100%', width: '100%' }}
+              resizerStyle={{ background: '#d6d6d6', width: '10px', cursor: 'col-resize' }}
+            >
+              {/* Left Pane */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <Box sx={{ height: '600px', display: 'flex', flexDirection: 'column' }}>
+                  <MapContainer style={{ width: '100%', height: '100%' }} />
+                </Box>
+                <Box sx={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
+                  <Paper sx={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%', padding: '20px' }}>
+                    <NodeMeasurement style={{ width: '100%', height: '100%' }} />
+                  </Paper>
+                </Box>
+              </Box>
+              
+              {/* Right Pane */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', borderLeft: '1px solid #ccc' }}>
+                <Paper sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '16px' }}>
+                  <LayerContainer style={{ width: '100%', height: '100%' }} />
+                </Paper>
+              </Box>
+            </SplitPane>
           </Box>
           <Outlet />
         </Box>

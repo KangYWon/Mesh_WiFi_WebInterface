@@ -8,7 +8,7 @@ import setting from './setting';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-  items: [dashboard, storage, analytics, setting]
+  items: [dashboard, analytics, storage, setting]
 };
 
 export default menuItems;

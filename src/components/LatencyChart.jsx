@@ -31,10 +31,23 @@ const LatencyChart = ({ data = [] }) => {
     ],
   };
 
+  // 차트 옵션
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false, // 컨테이너 크기에 맞게 차트를 조정
+    scales: {
+      x: {
+        beginAtZero: true,
+      },
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
-    <div>
-      {/* <Line data={chartData} /> */}
-      <Line ref={chartRef} data={chartData} />
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <Line ref={chartRef} data={chartData} options={chartOptions} />
     </div>
   );
 };
