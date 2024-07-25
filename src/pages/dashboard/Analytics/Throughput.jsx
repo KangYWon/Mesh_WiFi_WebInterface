@@ -16,7 +16,6 @@ const Throughput = () => {
         const nodeDataFromServer = message.data;
         console.log('Fetched Node:', nodeDataFromServer); // 받은 데이터 확인
         setNodes(nodeDataFromServer);
-      
       } 
     };
 

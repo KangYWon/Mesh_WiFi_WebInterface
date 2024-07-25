@@ -21,12 +21,13 @@ const Latency = () => {
           const initialLatencyResults = Array(nodes.length).fill().map(() => Array(nodes.length).fill('-'));
           
           // Populate latnecy results based on fetched data
-          latencyDataFromServer.forEach (data => {
-            const { source_seq, destination_seq, result } = data;
+          latencyDataFromServer.forEach(data => {
+            const { source_seq, destination_seq, result, num } = data;
             if (source_seq < nodes.length && destination_seq < nodes.length) {
-              initialLatencyResults[source_seq][destination_seq] = `${result.toFixed(2)} ms`;
+              initialLatencyResults[source_seq][destination_seq] = `${result.toFixed(2)} ms, ${num.toFixed(1)} time`;
             }
           });
+
           // Setting latnecy results in state
           setLatencyResults(initialLatencyResults);
         } else {
@@ -111,7 +112,8 @@ const Latency = () => {
                     <TableCell key={colIndex} sx={{ ...cellStyle, backgroundColor: getBackgroundColor(rowIndex, colIndex) }}>
                       {resultCell !== '-' && resultCell ? (
                         <span>
-                          {`${resultCell}`}
+                          {`${resultCell.result}`} <br/>
+                          {`${resultCell.num}`}
                         </span>
                       ) : '-'}
                     </TableCell>
@@ -122,7 +124,7 @@ const Latency = () => {
           </TableBody>
         </Table>
         <Typography variant="body2" sx={{ alignSelf: 'flex-end', marginTop: 'auto' }}>
-          ※Latency표 측정값은 20개 평균 값이다.※
+          ※Latency표 측정값은 num개 평균 값이다.※
         </Typography>
       </Paper>
     </Grid>
