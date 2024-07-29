@@ -16,7 +16,6 @@ export default function NodeMeasurement({ }) {
   const [currentMeasurementType, setCurrentMeasurementType] = useState(null);
   const [measurementRequested, setMeasurementRequested] = useState(false);
   const [error, setError] = useState('');
-
   const navigate = useNavigate();
   //clear result의 경우 서버쪽으로 send 그만 정보 보내라는 요청으로 로직 고민해보기. 
 

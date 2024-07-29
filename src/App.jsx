@@ -10,6 +10,7 @@ import ScrollTop from 'components/ScrollTop';
 
 export default function App() {
   return (
+    
     <ThemeCustomization>
       <ScrollTop>
         <RouterProvider router={router} />
@@ -17,3 +18,17 @@ export default function App() {
     </ThemeCustomization>
   );
 }
+
+// export default function App() {
+//   return (
+//     <GlobalStateProvider>
+//       <ThemeCustomization>
+//         <ScrollTop>
+//           <MapContainer />
+//           <LayerContainer />
+//           <RouterProvider router={router} />
+//         </ScrollTop>
+//       </ThemeCustomization>
+//     </GlobalStateProvider>
+//   );
+// }
