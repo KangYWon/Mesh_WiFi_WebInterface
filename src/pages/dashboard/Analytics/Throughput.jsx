@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
 
+//fetch_node
 const Throughput = () => {
   const [nodes, setNodes] = useState([]);
   const [throughputResults, setThroughputResults] = useState([]);
@@ -30,6 +31,7 @@ const Throughput = () => {
     };
   }, []);
 
+  //fetch_throughput
   useEffect(() => {
     const handleWebSocketMessage = (message) => {
       console.log('WebSocket Message:', message); // WebSocket 메시지 확인

@@ -5,7 +5,6 @@ import router from 'routes';
 import ThemeCustomization from 'themes';
 
 import ScrollTop from 'components/ScrollTop';
-
 // ==============================|| APP - THEME, ROUTER, LOCAL ||============================== //
 
 export default function App() {
@@ -18,17 +17,3 @@ export default function App() {
     </ThemeCustomization>
   );
 }
-
-// export default function App() {
-//   return (
-//     <GlobalStateProvider>
-//       <ThemeCustomization>
-//         <ScrollTop>
-//           <MapContainer />
-//           <LayerContainer />
-//           <RouterProvider router={router} />
-//         </ScrollTop>
-//       </ThemeCustomization>
-//     </GlobalStateProvider>
-//   );
-// }

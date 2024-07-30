@@ -4,7 +4,7 @@ import { Line } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
-const LatencyChart = ({ data = [], loss = [] }) => {
+const ThroughputChart = ({ data = [], loss = [] }) => {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -12,14 +12,14 @@ const LatencyChart = ({ data = [], loss = [] }) => {
 
     if (chartInstance) {
       // 데이터가 업데이트 될 때마다 새로운 데이터를 차트에 추가
-      chartInstance.data.labels = Array.from({ length: data.length }, (_, i) => (i + 1) * 50);
+      chartInstance.data.labels = Array.from({ length: data.length }, (_, i) => (i + 1) * 10);
       chartInstance.data.datasets[0].data = data;
       chartInstance.update();
     }
-  }, [data]);
+  }, [data, loss]);
 
   const chartData = {
-    labels: Array.from({ length: data.length }, (_, i) => (i + 1) * 50), // 50 단위로 라벨 생성
+    labels: Array.from({ length: data.length }, (_, i) => (i + 1) * 10), // 10 단위로 라벨 생성
     datasets: [
       {
         label: 'Throughput (Mbps)',
@@ -34,7 +34,7 @@ const LatencyChart = ({ data = [], loss = [] }) => {
   // 차트 옵션
   const chartOptions = {
     responsive: true,
-    maintainAspectRatio: false, // 컨테이너 크기에 맞게 차트를 조정
+    maintainAspectRatio: false, 
     scales: {
       x: {
         beginAtZero: true,
@@ -48,8 +48,8 @@ const LatencyChart = ({ data = [], loss = [] }) => {
           callbacks: {
             label: function (context) {
               const label = context.dataset.label || '';
-              const loss = lossData[context.dataIndex];
-              return `${label}: ${context.parsed.y} Mbps (Loss: ${loss}%)`;
+              const lossValue = loss[context.dataIndex] || 0;
+              return `${label}: ${context.parsed.y} Mbps \n (Loss: ${lossValue}%)`;
             }
           }
         }
@@ -63,4 +63,4 @@ const LatencyChart = ({ data = [], loss = [] }) => {
   );
 };
 
-export default LatencyChart;
+export default ThroughputChart;

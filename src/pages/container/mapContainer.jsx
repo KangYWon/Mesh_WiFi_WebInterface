@@ -28,8 +28,8 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
   //     to: node.parentMac
   //   }))
   // );
-  const [nodes] = useState([]); // 기본적으로 하드코딩된 데이터 사용
-  const [connections, setConnections] = useState([]); // 연결 데이터
+  const [nodes, setNodes] = useState([]); // nodes 상태 정의
+  const [connections, setConnections] = useState([]); // 연결 데이터 상태
   const [openedPopupNode, setOpenedPopupNode] = useState(null);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
     // WebSocket 콜백 설정
     setOnMessageCallback(handleWebSocketMessage);
     // 초기 메시지 전송
-    //sendMessage('fetch_gps', { type: 'fetch_gps' });
+    sendMessage('fetch_gps', { type: 'fetch_gps' });
 
     // 컴포넌트 언마운트 시 콜백 해제
     return () => {
@@ -130,7 +130,7 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
             }}
           >
           <Popup>
-            Node : {node.seq}<br /> Layer: {node.layer}<br />Parent MAC: {node.parentMac}<br />My MAC: {node.myMac}
+            Node : {node.seq}<br /> Layer: {node.layer}<br />Parent MAC: {node.parent_mac}<br />My MAC: {node.my_mac}
           </Popup>
           </CircleMarker>
         ))}

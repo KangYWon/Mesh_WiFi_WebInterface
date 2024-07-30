@@ -4,9 +4,10 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import LatencyChartPage  from 'src/pages/dashboard/Analytics/latencyChartPage.jsx';
-import ThroughputChartPage from 'src/pages/dashboard/Analytics/latencyChartPage.jsx';
+import ThroughputChartPage from 'src/pages/dashboard/Analytics/throughputChartPage.jsx';
 import { useNavigate } from 'react-router-dom';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
+import { textFieldStyles, buttonStyles, clearButtonStyles, analyticsButtonStyles } from 'src/components/styles.js';
 
 export default function NodeMeasurement({ }) {
   const [nodes, setNodes] = useState([]);
@@ -56,8 +57,8 @@ export default function NodeMeasurement({ }) {
             // throughput 데이터 업데이트
             setMeasurementResult({ 
               type: 'Throughput', 
-              result: `${result.toFixed(2)} Mbps`, 
-              loss: `${loss.toFixed(1)}% loss` 
+              result: result, 
+              loss: loss
             });
           } else {
             console.error('Unexpected message type:', type);
@@ -84,6 +85,7 @@ export default function NodeMeasurement({ }) {
     } else {
     setError('');
     } 
+
     setCurrentMeasurementType(type); // 측정 유형 설정
     setMeasurementRequested(true); // 측정 요청 상태를 true로 설정
 
@@ -113,29 +115,6 @@ export default function NodeMeasurement({ }) {
     setMeasurementRequested(false); // 결과 삭제 시 측정 요청 상태도 초기화
   };
 
-  // 초록색으로 설정된 테마
-  const theme = createTheme({
-    components: {
-      MuiTextField: {
-        styleOverrides: {
-          root: {
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: 'green', // 테두리 색상
-              },
-              '&:hover fieldset': {
-                borderColor: 'darkgreen', // hover 시 테두리 색상
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: 'green', // 포커스 시 테두리 색상
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '16px' }}>
       <h2>Node Measurement</h2>
@@ -151,22 +130,7 @@ export default function NodeMeasurement({ }) {
         error={!!error}
         helperText={error}
         disabled={!!measurementResult} // 결과가 있으면 비활성화
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            '&:hover fieldset': {
-              borderColor: 'green', // hover 시 테두리 색상
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: 'green !important', // 포커스 시 테두리 색상
-              boxShadow: '0 0 0 2px rgba(190, 227, 43, 0.3) !important', // 포커스 시 그림자 색상
-            },
-          },
-          '& .MuiInputLabel-root': {
-            '&.Mui-focused': {
-              color: 'green !important', // 포커스 시 레이블 색상
-            },
-          },
-        }}
+        sx={textFieldStyles}
       />
       <TextField
         label="Destination Node"
@@ -180,67 +144,20 @@ export default function NodeMeasurement({ }) {
         error={!!error}
         helperText={error}
         disabled={!!measurementResult} 
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            '&:hover fieldset': {
-              borderColor: 'green', // hover 시 테두리 색상
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: 'green !important', // 포커스 시 테두리 색상
-              boxShadow: '0 0 0 2px rgba(190, 227, 43, 0.3) !important', // 포커스 시 그림자 색상
-            },
-          },
-          '& .MuiInputLabel-root': {
-            '&.Mui-focused': {
-              color: 'green !important', // 포커스 시 레이블 색상
-            },
-          },
-        }}
+        sx={textFieldStyles}
         ></TextField>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
         <Button
           variant="contained"
-          sx={{
-            backgroundColor: 'green',
-            color: 'white',
-            '&:hover': {
-              backgroundColor: 'darkgreen',
-            },
-            '&::after': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              boxShadow: '0 0 5px 5px rgba(0, 255, 0, 0.9)', // 원하는 색상으로 변경
-              borderRadius: 'inherit', // 경계선을 버튼 모양에 맞춤
-              pointerEvents: 'none', // 박스 그림자가 클릭을 방해하지 않도록 함
-            },
-          }}
+          sx={buttonStyles}
           onClick={() => handleMeasurement('Throughput')}
         >
           Throughput
         </Button>
         <Button
           variant="contained"
-          sx={{
-            backgroundColor: 'green',
-            color: 'white',
-            '&:hover': {
-              backgroundColor: 'darkgreen',
-            },
-            '&::after': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              boxShadow: '0 0 5px 5px rgba(0, 255, 0, 0.9)', // 원하는 색상으로 변경
-              borderRadius: 'inherit', // 경계선을 버튼 모양에 맞춤
-              pointerEvents: 'none', // 박스 그림자가 클릭을 방해하지 않도록 함
-            },
-          }}
+          sx={buttonStyles}
           onClick={() => handleMeasurement('Latency')}
         >
           Latency
@@ -257,7 +174,7 @@ export default function NodeMeasurement({ }) {
             <LatencyChartPage latencyData={measurementResult.value} />
           ) : (
             // <p>[{measurementResult.type}] : {measurementResult.result} ({measurementResult.loss})</p>
-            <ThroughputChartPage throughputData={measurementResult.value} />
+            <ThroughputChartPage throughputData={measurementResult} />
           )}
         </Box>
       )}
@@ -265,25 +182,7 @@ export default function NodeMeasurement({ }) {
       {(source || destination) && !measurementResult && (
         <Button
           variant="outlined"
-          sx={{
-            marginTop: 2,
-            borderColor: 'black',
-            color: 'black',
-            '&:hover': {
-              borderColor: 'black',
-              color: 'black',
-            },
-            '&::after': {
-                content: '""',
-                display: 'block',
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                boxShadow: '0 0 5px 5px rgba(0, 0, 0, 0.9)', // 원하는 색상으로 변경
-                borderRadius: 'inherit', // 경계선을 버튼 모양에 맞춤
-                pointerEvents: 'none', // 박스 그림자가 클릭을 방해하지 않도록 함
-              },
-          }}
+          sx={clearButtonStyles}
           onClick={handleClearInputs}
         >
           Clear Inputs
@@ -292,26 +191,8 @@ export default function NodeMeasurement({ }) {
 
       {measurementResult && (
         <Button
-        variant="outlined"
-        sx={{
-          marginTop: 2,
-          borderColor: 'black',
-          color: 'black',
-          '&:hover': {
-            borderColor: 'black',
-            color: 'black',
-          },
-          '&::after': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              boxShadow: '0 0 5px 5px rgba(0, 0, 0, 0.9)', // 원하는 색상으로 변경
-              borderRadius: 'inherit', // 경계선을 버튼 모양에 맞춤
-              pointerEvents: 'none', // 박스 그림자가 클릭을 방해하지 않도록 함
-            },
-          }}
+          variant="outlined"
+          sx={clearButtonStyles}
           onClick={handleClearResults}
         >
           Clear Results
@@ -320,25 +201,7 @@ export default function NodeMeasurement({ }) {
 
       <Button
         variant="outlined"
-        sx={{
-          marginTop: 2,
-          borderColor: 'green',
-          color: 'green',
-          '&:hover': {
-            borderColor: 'darkgreen',
-            color: 'darkgreen',
-          },
-          '&::after': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              boxShadow: '0 0 5px 5px rgba(0, 255, 0, 0.9)', // 원하는 색상으로 변경
-              borderRadius: 'inherit', // 경계선을 버튼 모양에 맞춤
-              pointerEvents: 'none', // 박스 그림자가 클릭을 방해하지 않도록 함
-            },
-        }}
+        sx={analyticsButtonStyles}
         onClick={() => navigate('/analytics')}
       >
         Go to the Analytics

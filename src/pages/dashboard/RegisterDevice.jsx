@@ -3,6 +3,7 @@ import { Container, Grid, TextField, Button, Typography, Table, TableBody, Table
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
 import { sendMessage } from 'src/api/webSocket.js'; 
+import { textFieldStyles, buttonStyles } from 'src/components/styles.js';
 
 const RegisterDevice = () => {
   const [devices, setDevices] = useState([]);
@@ -102,24 +103,11 @@ const RegisterDevice = () => {
                 onChange={(e) => setNewDeviceMac(e.target.value)}
                 error={!!error}
                 helperText={error}
+                sx={textFieldStyles}
               />
-              <Button variant="contained" sx={{
-                backgroundColor: 'green',
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: 'darkgreen',
-                },
-                '&::after': {
-                  content: '""',
-                  display: 'block',
-                  position: 'absolute',
-                  width: '100%',
-                  height: '100%',
-                  boxShadow: '0 0 5px 5px rgba(0, 255, 0, 0.9)', // 원하는 색상으로 변경
-                  borderRadius: 'inherit', // 경계선을 버튼 모양에 맞춤
-                  pointerEvents: 'none', // 박스 그림자가 클릭을 방해하지 않도록 함
-                },
-              }} color="primary" type="submit">
+              <Button variant="contained" 
+                sx={buttonStyles}
+                color="primary" type="submit">
                 등록
               </Button>
             </form>

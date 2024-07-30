@@ -5,7 +5,8 @@ import { Typography } from '@mui/material';
 import { setOnMessageCallback } from 'src/api/webSocket.js';
 
 const ThroughputChartPage = () => {
-  const [throughputData, setthroughputData] = useState([]);
+  const [throughputData, setThroughputData] = useState([]);
+  const [lossData, setLossData] = useState([]);
   const [measurementResult, setMeasurementResult] = useState(null);
   const chartRef = useRef(null); // 레이아웃 업데이트를 위한 ref
 
@@ -15,10 +16,13 @@ const ThroughputChartPage = () => {
         const { type, data } = message;
         
         if (type === 'throughput') {
-          const result = data.result;
-          setLatencyData(prevData => {
+          const { result, loss } = data;
+          setThroughputData(prevData => {
             const updatedData = [...prevData, parseFloat(result)];
-
+            return updatedData;
+          });
+          setLossData(prevData => {
+            const updatedData = [...prevData, parseFloat(loss)];
             return updatedData;
           });
         } else {
@@ -38,7 +42,7 @@ const ThroughputChartPage = () => {
 
       <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray' }}>
         <Typography variant="h6">Throughput Chart</Typography>
-        <ThroughputChart data={throughputData} />
+        <ThroughputChart data={throughputData} loss={lossData} />
       </Box>
 
       {measurementResult && (

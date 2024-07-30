@@ -1,5 +1,5 @@
 // LayerContainer.js
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import CircularStatic from "components/CircularStatic";
 import Tree from 'react-d3-tree';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js'; 
