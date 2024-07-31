@@ -18,13 +18,17 @@ const Latency = () => {
 
         if (Array.isArray(latencyDataFromServer)){
           // Initialize latnecy results array
-          const initialLatencyResults = Array(nodes.length).fill().map(() => Array(nodes.length).fill('-'));
+          // const initialLatencyResults = Array(nodes.length).fill(null).map(() => Array(nodes.length).fill(null));
+          const initialLatencyResults = Array(nodes.length).fill().map(() => Array(nodes.length).fill({ result: '-', num: '-' }));
           
           // Populate latnecy results based on fetched data
           latencyDataFromServer.forEach(data => {
             const { source_seq, destination_seq, result, num } = data;
             if (source_seq < nodes.length && destination_seq < nodes.length) {
-              initialLatencyResults[source_seq][destination_seq] = `${result.toFixed(2)} ms, ${num.toFixed(1)} time`;
+              initialLatencyResults[source_seq][destination_seq] = {
+                result: result.toFixed(2) + ' ms',
+                num: num.toFixed(1) + ' time'
+              };
             }
           });
 
@@ -48,6 +52,16 @@ const Latency = () => {
     // WebSocket 메시지 콜백 설정
     setOnMessageCallback(handleWebSocketMessage);
     sendMessage('fetch_latency', { type: 'fetch_latency' });
+     // Function to send messages with delay
+    //  const sendMessageWithDelay = () => {
+    //   sendMessage('fetch_latency', { type: 'fetch_latency' });
+    //   setTimeout(() => {
+    //     sendMessageWithDelay();
+    //   }, 1000); // 5초 텀
+    // };
+    
+    // Start sending messages
+    //sendMessageWithDelay();
 
     // Clean up on unmount
     return () => {
@@ -68,19 +82,24 @@ const Latency = () => {
   };
 
   const getBackgroundColor = (source_seq, destination_seq) => {
-    if (source_seq === destination_seq) {
-      return ''; // 자기 자신인 경우 색상 없음
-    } else if (source_seq < destination_seq && latencyResults[source_seq]?.[destination_seq] !== '-') {
-      return 'rgba(255, 255, 0, 0.1)'; // 대각선 위의 부분에 노란색 적용
-    } else {
-      return ''; // 대각선 아래의 부분에는 색상 없음
+    const cellValue = latencyResults[source_seq]?.[destination_seq];
+    
+    console.log(`source_seq: ${source_seq}, destination_seq: ${destination_seq}, cellValue:`, cellValue);
+    
+    if (!cellValue) {
+        return ''; // If cellValue is undefined or null, return empty string
     }
-    /**
-     * else if (source < destination && latencyResults[source][destination] !== '-') {
-      return 'rgba(255, 255, 0, 0.1)'; // 대각선 위의 부분에 노란색 적용
-    } else if (source > destination && latencyResults[destination][source] !== '-') {
-      return 'rgba(255, 255, 0, 0.1)'; // 대각선 위의 부분에 노란색 적용
-     */
+
+    if (source_seq === destination_seq) {
+        return ''; // 자기 자신인 경우 색상 없음
+    } else if (
+        source_seq < destination_seq &&
+        cellValue.result !== '-' // Check if result is not '-'
+    ) {
+        return 'rgba(255, 255, 0, 0.1)'; // 대각선 위의 부분에 노란색 적용
+    } else {
+        return ''; // 대각선 아래의 부분에는 색상 없음
+    }
   };
 
   return (

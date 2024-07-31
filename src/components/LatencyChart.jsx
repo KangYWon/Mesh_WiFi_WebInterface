@@ -7,17 +7,6 @@ Chart.register(...registerables);
 const LatencyChart = ({ data = [] }) => {
   const chartRef = useRef(null);
 
-  useEffect(() => {
-    const chartInstance = chartRef.current;
-
-    if (chartInstance) {
-      // 데이터가 업데이트 될 때마다 새로운 데이터를 차트에 추가
-      chartInstance.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
-      chartInstance.data.datasets[0].data = data;
-      chartInstance.update();
-    }
-  }, [data]);
-
   const chartData = {
     labels: Array.from({ length: data.length }, (_, i) => i + 1), // 1부터 데이터 길이까지의 라벨 생성
     datasets: [
@@ -44,6 +33,18 @@ const LatencyChart = ({ data = [] }) => {
       },
     },
   };
+
+  useEffect(() => {
+    const chartInstance = chartRef.current;
+
+    if (chartInstance) {
+      // 데이터가 업데이트 될 때마다 새로운 데이터를 차트에 추가
+      chartInstance.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
+      chartInstance.data.datasets[0].data = data;
+      chartInstance.update();
+    }
+  }, [data]);
+
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>

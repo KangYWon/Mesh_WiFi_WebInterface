@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import LatencyChart from 'src/components/LatencyChart.jsx'; 
 import { Typography } from '@mui/material';
@@ -7,10 +7,10 @@ import { setOnMessageCallback } from 'src/api/webSocket.js';
 const LatencyChartPage = () => {
   const [latencyData, setLatencyData] = useState([]);
   const [measurementResult, setMeasurementResult] = useState(null);
-  const chartRef = useRef(null); // 레이아웃 업데이트를 위한 ref
 
   useEffect(() => {
     setOnMessageCallback((message) => {
+      console.log('WebSocket Message:', message); // WebSocket 메시지 확인
       try {
         const { type, data } = message;
         
@@ -22,7 +22,6 @@ const LatencyChartPage = () => {
             // 평균 계산
             const avg = calculateAverage(updatedData);
             setMeasurementResult({ type: 'Latency', value: avg });
-
             return updatedData;
           });
         } else {
@@ -32,7 +31,7 @@ const LatencyChartPage = () => {
         console.error('Error processing WebSocket message:', error);
       }
     });
-  }, []);
+   }, []);
 
   // 배열의 평균 계산 함수
   const calculateAverage = (data) => {
@@ -51,12 +50,6 @@ const LatencyChartPage = () => {
         <Typography variant="h6">Latency Chart</Typography>
         <LatencyChart data={latencyData} />
       </Box>
-      {/* <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray', width: '100%', height: '400px' }}>
-        <Typography variant="h6">Latency Chart</Typography>
-        <Box ref={chartRef} sx={{ width: '100%', height: '100%' }}>
-          <LatencyChart data={latencyData} />
-        </Box>
-      </Box> */}
 
       {measurementResult && (
         <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray' }}>

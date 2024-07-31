@@ -4,33 +4,49 @@ import { Box } from '@mui/material';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-arrowheads';
+import L from 'leaflet';  // Import Leaflet library
+import picture from 'src/assets/images/icons/Layer_Color.png'; // Import the image
+import toggleIcon from 'src/assets/images/icons/nodes2.png';
 
 // Default center coordinates
 const center = [36.103774, 129.388557];
 
-// // 하드코딩된 노드와 연결 데이터
-// const testNodes = [
-//   { latitude: 36.1033053, longitude: 129.3870186, seq: '1', layer: '1', myMac: '00:1A:2B:3C:4D:5E', parentMac: '' },
-//   { latitude: 36.1036842, longitude: 129.3874188, seq: '2', layer: '2', myMac: '00:1A:2B:3C:4D:6E', parentMac: '00:1A:2B:3C:4D:5E' },
-//   { latitude: 36.1040540, longitude: 129.3886542, seq: '3', layer: '2', myMac: '00:1A:2B:3C:4D:7E', parentMac: '00:1A:2B:3C:4D:5E' },
-//   { latitude: 36.1028429, longitude: 129.3861420, seq: '4', layer: '3', myMac: '00:1A:2B:3C:4D:8E', parentMac: '00:1A:2B:3C:4D:6E' },
-// //   { latitude: 36.1034352, longitude: 129.3857841, seq: '5', layer: '3', myMac: '00:1A:2B:3C:4D:9E', parentMac: '00:1A:2B:3C:4D:7E' },
-// //   { latitude: 36.10379,   longitude: 129.3917,    seq: '6', layer: '3', myMac: '00:1A:2B:3C:4D:9A', parentMac: '00:1A:2B:3C:4D:7E' },
-// //   { latitude: 36.10428,   longitude: 129.3860,    seq: '7', layer: '4', myMac: '00:1A:2B:3C:4D:9B', parentMac: '00:1A:2B:3C:4D:9E' }
-// ];
+const CustomControl = ({ toggleImage, showImage }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    const control = L.control({ position: 'topleft' }); // Change position as needed
+    control.onAdd = () => {
+      const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+       //${showImage ? '≡' : '≡'}
+      div.innerHTML = `
+        <button style="width: 30px; height: 30px; background: white; border: none; display: flex; justify-content: center; align-items: center;">
+          <img src="${toggleIcon}" alt="Toggle" style="width: 20px; height: 20px;" />
+        </button>
+      `;
+      div.onclick = toggleImage;
+      return div;
+    };
+    control.addTo(map);
+
+    // Cleanup function
+    return () => {
+      control.remove();
+    };
+  }, [map, toggleImage, showImage]);
+
+  return null;
+};
 
 const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
-  // const [nodes] = useState(testNodes); // 기본적으로 하드코딩된 데이터 사용
-  // const [connections] = useState(testNodes
-  //   .filter(node => node.parentMac) // ParentMac이 있는 노드만 필터링
-  //   .map(node => ({
-  //     from: node.myMac,
-  //     to: node.parentMac
-  //   }))
-  // );
-  const [nodes, setNodes] = useState([]); // nodes 상태 정의
-  const [connections, setConnections] = useState([]); // 연결 데이터 상태
+  const [nodes, setNodes] = useState([]); 
+  const [connections, setConnections] = useState([]); 
   const [openedPopupNode, setOpenedPopupNode] = useState(null);
+  const [showImage, setShowImage] = useState(false);
+
+  const toggleImage = () => {
+    setShowImage(!showImage);
+  };
 
   useEffect(() => {
     console.log('Opened Popup Node:', openedPopupNode);
@@ -42,16 +58,16 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
             const nodeDataFromServer = message.data;
             setNodes(nodeDataFromServer);
 
-           // 연결 데이터 생성
-          const connections = nodeDataFromServer
-          .filter(node => node.parentMac) // ParentMac이 있는 노드만 필터링
-          .map(node => ({
-            from: node.myMac,
-            to: node.parentMac
-          }));
+            // 연결 데이터 생성
+            const connections = nodeDataFromServer
+            .filter(node => node.parent_mac) // ParentMac이 있는 노드만 필터링
+            .map(node => ({
+              from: node.my_mac,
+              to: node.parent_mac
+            }));
 
-        setConnections(connections);
-      }
+          setConnections(connections);
+        }
     };
     // WebSocket 콜백 설정
     setOnMessageCallback(handleWebSocketMessage);
@@ -112,6 +128,7 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
+        <CustomControl toggleImage={toggleImage} showImage={showImage} />
         {nodes.map(node => (
           <CircleMarker
             key={node.seq + (openedPopupNode?.seq === node.seq ? '-selected' : '')}
@@ -129,14 +146,14 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
               }
             }}
           >
-          <Popup>
-            Node : {node.seq}<br /> Layer: {node.layer}<br />Parent MAC: {node.parent_mac}<br />My MAC: {node.my_mac}
-          </Popup>
+            <Popup>
+              Node : {node.seq}<br /> Layer: {node.layer}<br />Parent MAC: {node.parent_mac}<br />My MAC: {node.my_mac}
+            </Popup>
           </CircleMarker>
         ))}
         {connections.map((conn, index) => {
-          const fromNode = nodes.find(node => node.myMac === conn.from);
-          const toNode = nodes.find(node => node.myMac === conn.to);
+          const fromNode = nodes.find(node => node.my_mac === conn.from);
+          const toNode = nodes.find(node => node.my_mac === conn.to);
           if (!fromNode || !toNode) return null;
           const latlngs = [
             [fromNode.latitude, fromNode.longitude],
@@ -148,6 +165,20 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
             </React.Fragment>
           );
         })}
+        {showImage && (
+          <img 
+            src={picture}
+            alt="Overlay" 
+            style={{
+              position: 'absolute',
+              bottom: '0',
+              left: '0',
+              width: '170px',
+              height: '215px',
+              zIndex: 999
+            }}
+          />
+        )}
       </MapContainer>
     </Box>
   );

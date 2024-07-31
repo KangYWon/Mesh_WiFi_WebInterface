@@ -17,14 +17,8 @@ const ThroughputChartPage = () => {
         
         if (type === 'throughput') {
           const { result, loss } = data;
-          setThroughputData(prevData => {
-            const updatedData = [...prevData, parseFloat(result)];
-            return updatedData;
-          });
-          setLossData(prevData => {
-            const updatedData = [...prevData, parseFloat(loss)];
-            return updatedData;
-          });
+          setThroughputData(prevData => [...prevData, parseFloat(result)]);
+          setLossData(prevData => [...prevData, parseFloat(loss)]);
         } else {
           console.error('Unexpected message type:', type);
         }
@@ -34,6 +28,9 @@ const ThroughputChartPage = () => {
     });
   }, []);
 
+  // 소수점 네 자리까지 포맷하는 함수
+  const formatNumber = (num) => num.toFixed(4);
+
   return (
     <Box sx={{ padding: '20px' }}>
       <Typography variant="h4" gutterBottom>
@@ -42,7 +39,10 @@ const ThroughputChartPage = () => {
 
       <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray' }}>
         <Typography variant="h6">Throughput Chart</Typography>
-        <ThroughputChart data={throughputData} loss={lossData} />
+        <ThroughputChart 
+          data={throughputData.map(formatNumber)} // 데이터 포맷 적용
+          loss={lossData.map(formatNumber)} // 데이터 포맷 적용
+        />
       </Box>
 
       {measurementResult && (
@@ -58,3 +58,4 @@ const ThroughputChartPage = () => {
 };
 
 export default ThroughputChartPage;
+
