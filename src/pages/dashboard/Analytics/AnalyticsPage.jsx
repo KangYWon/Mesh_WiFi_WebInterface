@@ -7,6 +7,7 @@ import Throughput from './Throughput';
 import MapContainer from 'src/pages/container/mapContainer.jsx';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import { Outlet } from 'react-router-dom';
+import navigation from 'layout/Dashboard/Drawer/DrawerContent/Navigation';
 
 const AnalyticsPage = () => {
 

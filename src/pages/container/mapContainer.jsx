@@ -174,7 +174,7 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
               bottom: '0',
               left: '0',
               width: '170px',
-              height: '215px',
+              height: '235px',
               zIndex: 999
             }}
           />

@@ -47,7 +47,7 @@ const RegisterDevice = () => {
                 <TableRow>
                   <TableCell>MAC Address</TableCell>
                   <TableCell style={{ textAlign: 'center' }}>Status</TableCell>
-                  <TableCell></TableCell>
+                  <TableCell style={{ textAlign: 'center' }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -55,11 +55,26 @@ const RegisterDevice = () => {
                   <TableRow key={device.id}>
                     <TableCell>{device.mac}</TableCell>
                     <TableCell style={{ textAlign: 'center' }}>
-                      <CircleIcon style={{ color: device.status ? 'green' : 'red', verticalAlign: 'middle' }} />
+                      <CircleIcon 
+                        style={{ 
+                          color: device.status ? 'green' : 'gray', 
+                          verticalAlign: 'middle' 
+                        }} 
+                      />
                     </TableCell>
-                    <TableCell>
-                      <IconButton color="secondary" onClick={() => handleDeleteDevice(device.id)}>
+                    <TableCell style={{ textAlign: 'center' }}>
+                      <IconButton 
+                        color="secondary" 
+                        onClick={() => handleDeleteDevice(device.id)}
+                        style={{ marginRight: '10px' }}
+                      >
                         <DeleteIcon />
+                      </IconButton>
+                      <IconButton 
+                        color={device.status ? 'error' : 'primary'} 
+                        onClick={() => handleRestartDevice(device.id)}
+                      >
+                        <RestartAltIcon />
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -84,10 +99,18 @@ const RegisterDevice = () => {
                 onChange={(e) => setNewDeviceMac(e.target.value)}
                 error={!!error}
                 helperText={error}
+                sx={textFieldStyles}
               />
-              <Button variant="contained" color="primary" type="submit">
-                등록
-              </Button>
+              <div style={containerStyles}>
+                <Button 
+                  variant="contained" 
+                  sx={buttonStyles} 
+                  color="primary" 
+                  type="submit"
+                >
+                  등록
+                </Button>
+              </div>       
             </form>
           </Paper>
         </Grid>

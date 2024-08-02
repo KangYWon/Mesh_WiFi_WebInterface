@@ -45,7 +45,6 @@ const LatencyChart = ({ data = [] }) => {
     }
   }, [data]);
 
-
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <Line ref={chartRef} data={chartData} options={chartOptions} />

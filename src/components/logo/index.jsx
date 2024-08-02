@@ -20,7 +20,15 @@ import config from 'config';
 
 const LogoSection = ({ sx, to }) => {
   return (
-    <ButtonBase disableRipple component={Link} to={!to ? config.defaultPath : to} sx={sx}>
+    <ButtonBase 
+      disableRipple 
+      component={Link} 
+      to={!to ? config.defaultPath : to} 
+      sx={{
+        ...sx, // 기존의 sx 스타일을 유지
+        transform: 'translateY(13px)' // 아래로 10px 이동
+      }}
+    >
       <Stack direction="row" spacing={1} alignItems="center">
         <Logo />
       </Stack>

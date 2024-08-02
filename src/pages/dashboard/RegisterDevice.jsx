@@ -6,19 +6,26 @@ import { sendMessage } from 'src/api/webSocket.js';
 import { textFieldStyles, buttonStyles } from 'src/components/styles.js';
 
 const RegisterDevice = () => {
-  const [devices, setDevices] = useState([]);
+  // 임시 하드 코딩 데이터
+  const hardCodedDevices = [
+    { id: 1, mac: 'AA:BB:CC:DD:EE:FF', status: true, action: true },
+    { id: 2, mac: '11:22:33:44:55:66', status: false, action: true },
+  ];
+
+  const [devices, setDevices] = useState(hardCodedDevices);
   const [newDeviceMac, setNewDeviceMac] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
     // 페이지 로드 시 기존 장치 데이터를 서버에서 가져옵니다.
-    sendMessage('fetch_devices')
-      .then(data => {
-        setDevices(data);
-      })
-      .catch(error => {
-        console.error('Error fetching devices:', error);
-      });
+    // 실제 데이터 로드 부분 주석 처리
+    // sendMessage('fetch_devices')
+    //   .then(data => {
+    //     setDevices(data);
+    //   })
+    //   .catch(error => {
+    //     console.error('Error fetching devices:', error);
+    //   });
   }, []);
 
   const handleAddDevice = (e) => {
@@ -27,27 +34,63 @@ const RegisterDevice = () => {
       setError('MAC 주소를 입력해 주세요.');
       return;
     }
-    sendMessage('create_device', { mac: newDeviceMac })
-      .then(newDevice => {
-        setDevices([...devices, newDevice]);
-        setNewDeviceMac('');
-        setError('');
-      })
-      .catch(error => {
-        console.error('Error creating device:', error);
-        setError('장치 등록에 실패했습니다.');
-      });
+    // 임시 하드 코딩된 새 장치 추가
+    const newDevice = { id: devices.length + 1, mac: newDeviceMac, status: false, action: true };
+    setDevices([...devices, newDevice]);
+    setNewDeviceMac('');
+    setError('');
+
+    // 실제 데이터 전송 부분 주석 처리
+    // sendMessage('create_device', { mac: newDeviceMac })
+    //   .then(newDevice => {
+    //     setDevices([...devices, newDevice]);
+    //     setNewDeviceMac('');
+    //     setError('');
+    //   })
+    //   .catch(error => {
+    //     console.error('Error creating device:', error);
+    //     setError('장치 등록에 실패했습니다.');
+    //   });
   };
 
   const handleDeleteDevice = (id) => {
-    sendMessage('delete_device', { id })
+    setDevices(devices.filter(device => device.id !== id));
+    // 실제 데이터 전송 부분 주석 처리
+    // sendMessage('delete_device', { id })
+    //   .then(() => {
+    //     setDevices(devices.filter(device => device.id !== id));
+    //   })
+    //   .catch(error => {
+    //     console.error('Error deleting device:', error);
+    //     setError('장치 삭제에 실패했습니다.');
+    //   });
+  };
+
+  const handleStatusAndActionToggle = (id) => {
+    setDevices(devices.map(device => 
+      device.id === id ? { ...device, status: !device.status, action: !device.status } : device
+    ));
+  };
+
+  const handleRestartDevice = (id) => {
+    setDevices(devices.map(device => 
+      device.id === id ? { ...device, action: false } : device
+    ));
+    sendMessage('restart_device', { id })
       .then(() => {
-        setDevices(devices.filter(device => device.id !== id));
+        setDevices(devices.map(device => 
+          device.id === id ? { ...device, action: true } : device
+        ));
       })
       .catch(error => {
-        console.error('Error deleting device:', error);
-        setError('장치 삭제에 실패했습니다.');
+        console.error('Error restarting device:', error);
+        setError('장치 재시작에 실패했습니다.');
       });
+  };
+
+  const containerStyles = {
+    display: 'flex',
+    justifyContent: 'flex-end' // 버튼을 오른쪽으로 정렬
   };
 
   return (
@@ -65,7 +108,7 @@ const RegisterDevice = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>MAC Address</TableCell>
-                  <TableCell style={{ textAlign: 'center' }}>Status</TableCell>
+                  <TableCell style={{ textAlign: 'center' }}>Status/Action</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
@@ -74,10 +117,23 @@ const RegisterDevice = () => {
                   <TableRow key={device.id}>
                     <TableCell>{device.mac}</TableCell>
                     <TableCell style={{ textAlign: 'center' }}>
-                      <CircleIcon style={{ color: device.status ? 'green' : 'red', verticalAlign: 'middle' }} />
+                    <IconButton 
+                        onClick={() => device.status && handleRestartDevice(device.id)}
+                        disabled={!device.status}
+                      >
+                        <CircleIcon 
+                          style={{ 
+                            color: device.status ? (device.action ? 'green' : 'rgb(217, 13, 13, 0.9') : 'gray', 
+                            verticalAlign: 'middle' 
+                          }} 
+                        />
+                      </IconButton>
                     </TableCell>
-                    <TableCell>
-                      <IconButton color="secondary" onClick={() => handleDeleteDevice(device.id)}>
+                    <TableCell style={{ textAlign: 'center' }}>
+                      <IconButton 
+                        color="secondary" 
+                        onClick={() => handleDeleteDevice(device.id)}
+                      >
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
@@ -105,11 +161,16 @@ const RegisterDevice = () => {
                 helperText={error}
                 sx={textFieldStyles}
               />
-              <Button variant="contained" 
-                sx={buttonStyles}
-                color="primary" type="submit">
-                등록
-              </Button>
+              <div style={containerStyles}>
+                <Button 
+                  variant="contained" 
+                  sx={buttonStyles} 
+                  color="primary" 
+                  type="submit"
+                >
+                  등록
+                </Button>
+              </div>       
             </form>
           </Paper>
         </Grid>
