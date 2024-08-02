@@ -4,7 +4,7 @@ import { lazy } from 'react';
 import Loadable from 'components/Loadable';
 import Dashboard from 'layout/Dashboard';
 
-import RegisterDevice from 'pages/dashboard/RegisterDevice';
+import RegisterDevice from 'src/pages/dashboard/Device/RegisterDevice.jsx';
 import AnalyticsPage from 'pages/dashboard//Analytics/AnalyticsPage';
 import SettingPage from 'src/pages/extra-pages/Setting.jsx';
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
