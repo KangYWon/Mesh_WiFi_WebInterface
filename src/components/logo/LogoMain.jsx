@@ -24,7 +24,7 @@ const Logo = ({isIcon, sx}) => {
      *
      */
     <>
-      <img src={logo} alt="Network" width="55px" />
+      <img src={logo} alt="Network" width="50px" />
       
     </>
   );

@@ -15,9 +15,10 @@ import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
 
 // import the new containers
-import NodeMeasurement from 'src/pages/container/nodeMeasurement.jsx';
-import LayerContainer from 'src/pages/container/layerContainer.jsx';
-import MapContainer from 'src/pages/container/mapContainer.jsx';
+import MapContainer from 'src/pages/dashboard/MainPage/mapContainer.jsx';
+import NodeMeasurement from 'src/pages/dashboard/MainPage/NodeMeasure/nodeMeasurement.jsx';
+import LayerContainer from 'src/pages/dashboard/MainPage/layerContainer.jsx';
+
 import SplitPane from 'react-split-pane';
 
 // ==============================|| MAIN LAYOUT ||============================== //

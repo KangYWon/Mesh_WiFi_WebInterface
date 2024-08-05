@@ -9,7 +9,6 @@ import Box from '@mui/material/Box';
 import DrawerHeader from './DrawerHeader';
 import DrawerContent from './DrawerContent';
 import MiniDrawerStyled from './MiniDrawerStyled';
-
 import { drawerWidth } from 'config';
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
 

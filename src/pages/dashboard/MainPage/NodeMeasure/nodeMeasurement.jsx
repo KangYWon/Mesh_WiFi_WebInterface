@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import LatencyChartPage  from 'src/pages/dashboard/Analytics/latencyChartPage.jsx';
-import ThroughputChartPage from 'src/pages/dashboard/Analytics/throughputChartPage.jsx';
+
+import LatencyChartPage  from 'src/pages/dashboard/MainPage/NodeMeasure/latencyChartPage.jsx';
+import ThroughputChartPage from 'src/pages/dashboard/MainPage/NodeMeasure/throughputChartPage.jsx';
+
 import { useNavigate } from 'react-router-dom';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
 import { textFieldStyles, buttonStyles, clearButtonStyles, analyticsButtonStyles } from 'src/components/styles.js';

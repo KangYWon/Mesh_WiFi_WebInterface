@@ -6,6 +6,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
+import HomeIcon from '@mui/icons-material/Home';
 
 // project import
 import MainCard from 'components/MainCard';
@@ -80,16 +81,15 @@ export default function Breadcrumbs({ navigation, title, ...others }) {
           <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
             <Grid item>
               <MuiBreadcrumbs aria-label="breadcrumb">
-                <Typography
-                  component={Link}
+                <Link
                   to="/"
                   color="textSecondary"
                   variant="h6"
-                  sx={{ textDecoration: 'none' }}
+                  style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
                   onClick={handleHomeClick} // 링크 클릭 시 상태 리셋
                 >
-                  Home
-                </Typography>
+                  <HomeIcon sx={{ mr: 0.5, color: 'gray' }} /> {/* 아이콘 추가 */}
+                </Link>
                 {mainContent}
                 {itemContent}
               </MuiBreadcrumbs>

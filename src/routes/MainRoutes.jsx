@@ -4,12 +4,11 @@ import { lazy } from 'react';
 import Loadable from 'components/Loadable';
 import Dashboard from 'layout/Dashboard';
 
-import RegisterDevice from 'src/pages/dashboard/Device/RegisterDevice.jsx';
-import AnalyticsPage from 'pages/dashboard//Analytics/AnalyticsPage';
-import SettingPage from 'src/pages/extra-pages/Setting.jsx';
+// 동적 로딩을 위한 컴포넌트
+const RegisterDevice = Loadable(lazy(() => import('src/pages/dashboard/Device/RegisterDevice')));
+const AnalyticsPage = Loadable(lazy(() => import('pages/dashboard/Analytics/AnalyticsPage')));
+const SettingPage = Loadable(lazy(() => import('src/pages/extra-pages/Setting')));
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
-
-// render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -35,7 +34,7 @@ const MainRoutes = {
       path: 'sample-page',
       element: <SamplePage />
     },
-    //add device 경로
+    // add device 경로
     {
       path: 'setting',
       element: <SettingPage />

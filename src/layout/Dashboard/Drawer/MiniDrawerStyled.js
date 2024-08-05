@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import Drawer from '@mui/material/Drawer';
 
 // project import
-import { drawerWidth } from 'config';
+import { drawerWidth, miniDrawerWidth } from 'config';
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -34,18 +34,30 @@ const closedMixin = (theme) => ({
 // ==============================|| DRAWER - MINI STYLED ||============================== //
 
 const MiniDrawerStyled = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
-  width: drawerWidth,
+  width: open ? drawerWidth : miniDrawerWidth,
   flexShrink: 0,
   whiteSpace: 'nowrap',
   boxSizing: 'border-box',
   ...(open && {
-    ...openedMixin(theme),
-    '& .MuiDrawer-paper': openedMixin(theme)
+    ...theme.mixins.toolbar,
+    '& .MuiDrawer-paper': {
+      width: drawerWidth,
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
   }),
   ...(!open && {
-    ...closedMixin(theme),
-    '& .MuiDrawer-paper': closedMixin(theme)
-  })
+    '& .MuiDrawer-paper': {
+      width: miniDrawerWidth,
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      overflowX: 'hidden',
+    },
+  }),
 }));
 
 export default MiniDrawerStyled;

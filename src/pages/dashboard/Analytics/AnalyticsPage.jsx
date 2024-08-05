@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import Box from '@mui/material/Box';
 import Latency from './Latency';
 import Throughput from './Throughput';
-import MapContainer from 'src/pages/container/mapContainer.jsx';
+import MapContainer from 'src/pages/dashboard/MainPage/mapContainer.jsx';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import { Outlet } from 'react-router-dom';
 import navigation from 'layout/Dashboard/Drawer/DrawerContent/Navigation';
@@ -18,7 +18,7 @@ const AnalyticsPage = () => {
       </Typography>
       <Grid container spacing={4} direction="column">
         <Grid item xs={12}>
-          <Breadcrumbs navigation={navigation} title />
+          <Breadcrumbs navigation={navigation} title/>
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'row', height: '100%' }}>
             <Box sx={{ flex: 1.3, display: 'flex', flexDirection: 'column', marginRight: '16px', height: '50vh' }}>
               <MapContainer/>

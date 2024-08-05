@@ -5,7 +5,7 @@ import Tree from 'react-d3-tree';
 import { setOnMessageCallback } from 'src/api/webSocket.js'; 
 import Latency from 'pages/dashboard/Analytics/Latency';
 import Throughput from 'pages/dashboard/Analytics/Throughput';
-import NodeMeasurement from './nodeMeasurement';
+import NodeMeasurement from './NodeMeasure/nodeMeasurement';
 import testData from './testData'; // import 하드코딩된 데이터
 import * as d3 from 'd3';
 
