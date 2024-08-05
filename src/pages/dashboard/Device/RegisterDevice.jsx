@@ -7,7 +7,7 @@ import DeviceForm from './DeviceForm';
 const RegisterDevice = () => {
   // 임시 하드 코딩 데이터
   const hardCodedDevices = [
-    { id: 1, mac: 'AA:BB:CC:DD:EE:FF', status: true, action: true },
+    { id: 1, mac: 'AA:BB:CC:DD:EE:FF', status: true, action: true },//자체에서 true에서 false로 바꾼다. (서버에서는 true값 유지하고 보내주면 나는 true가 되는 식. )
     { id: 2, mac: '11:22:33:44:55:66', status: false, action: true },
   ];
 

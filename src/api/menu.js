@@ -3,7 +3,7 @@
 */
 
 import useSWR, { mutate } from 'swr';
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
 const initialState = {
   openedItem: 'dashboard',
@@ -59,4 +59,18 @@ export function handlerActiveItem(openedItem) {
     },
     false
   );
+}
+
+// 이 훅은 상태를 관리하는 로직을 포함합니다.
+export function useSetActiveItem() {
+  const [activeItem, setActiveItem] = useState(null);
+
+  const setActive = useCallback((itemId) => {
+    setActiveItem(itemId);
+  }, []);
+
+  return {
+    activeItem,
+    setActive
+  };
 }

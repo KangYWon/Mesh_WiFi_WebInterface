@@ -20,27 +20,29 @@ export default function NavItem({ item, level }) {
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
   const openItem = menuMaster.openedItem;
+  const { pathname } = useLocation();
+
+  const isSelected = !!matchPath({ path: item.url, end: false }, pathname) || openItem === item.id;
+
+  // active menu item on page load
+  useEffect(() => {
+    if (isSelected) {
+      handlerActiveItem(item.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, isSelected]);
 
   let itemTarget = '_self';
   if (item.target) {
     itemTarget = '_blank';
   }
-  let listItemProps = { component: forwardRef((props, ref) => <Link ref={ref} {...props} to={item.url} target={itemTarget} />) };
-  if (item?.external) {
-    listItemProps = { component: 'a', href: item.url, target: itemTarget };
-  }
+  
+  const listItemProps = item?.external
+    ? { component: 'a', href: item.url, target: itemTarget }
+    : { component: forwardRef((props, ref) => <Link ref={ref} {...props} to={item.url} target={itemTarget} />) };
 
   const Icon = item.icon;
   const itemIcon = item.icon ? <Icon style={{ fontSize: drawerOpen ? '1rem' : '1.25rem' }} /> : false;
-
-  const { pathname } = useLocation();
-  const isSelected = !!matchPath({ path: item.url, end: false }, pathname) || openItem === item.id;
-
-  // active menu item on page load
-  useEffect(() => {
-    if (pathname === item.url) handlerActiveItem(item.id);
-    // eslint-disable-next-line
-  }, [pathname]);
 
   const textColor = 'text.primary';
   const iconSelectedColor = theme.palette.success.dark; //'primary.main';

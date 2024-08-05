@@ -10,11 +10,15 @@ import HomeIcon from '@mui/icons-material/Home';
 
 // project import
 import MainCard from 'components/MainCard';
+import { useSetActiveItem } from 'api/menu'; 
 
+//Breadcrumbs를 이용해서 홈으로 이동했을 경우, 서랍의 해당 select된 항목도 변경되도록 해야함. 
 export default function Breadcrumbs({ navigation, title, ...others }) {
   const location = useLocation();
   const [main, setMain] = useState(null);
   const [item, setItem] = useState(null);
+
+  const setActiveItem = useSetActiveItem(); // 서랍 상태를 업데이트하는 함수 (가정)
 
   // set active item state
   const getCollapse = (menu) => {
@@ -44,6 +48,7 @@ export default function Breadcrumbs({ navigation, title, ...others }) {
   const handleHomeClick = () => {
     setMain(null); // 상태 리셋
     setItem(null); // 상태 리셋
+    setActiveItem(null); // 서랍 상태 리셋 (홈으로 이동 시 선택된 항목을 리셋)
   };
 
   let mainContent;
