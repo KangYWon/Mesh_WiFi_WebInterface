@@ -53,7 +53,7 @@ export default function DashboardLayout() {
             >
               {/* Left Pane */}
               <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <Box sx={{ height: '600px', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                <Box sx={{ flex: '0 1 600px', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                     <MapContainer style={{ width: '100%', height: '100%' }} />
                 </Box>
                 <Box sx={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
@@ -64,7 +64,7 @@ export default function DashboardLayout() {
               </Box>
               
               {/* Right Pane */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', height: '1000px', borderLeft: '1px solid #ccc' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', borderLeft: '1px solid #ccc' }}>
                 <Paper sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '16px' }}>
                   <LayerContainer style={{ width: '100%', height: '100%' }} />
                 </Paper>

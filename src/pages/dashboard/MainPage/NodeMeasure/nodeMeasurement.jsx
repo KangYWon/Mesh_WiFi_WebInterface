@@ -18,8 +18,9 @@ export default function NodeMeasurement({ }) {
   const [currentMeasurementType, setCurrentMeasurementType] = useState(null);
   const [measurementRequested, setMeasurementRequested] = useState(false);
   const [error, setError] = useState('');
+  const [resultPage, setResultPage] = useState(false); // 현재 페이지가 결과 페이지인지 상태
+  const [buttonDisabled, setButtonDisabled] = useState(false); // 버튼 비활성화 상태
   const navigate = useNavigate();
-  //clear result의 경우 서버쪽으로 send 그만 정보 보내라는 요청으로 로직 고민해보기. 
 
   useEffect(() => {
     console.log('Nodes:', nodes); // 디버깅 로그
@@ -32,23 +33,14 @@ export default function NodeMeasurement({ }) {
         console.log('Fetched Node:', nodeDataFromServer); // 받은 데이터 확인
         setNodes(nodeDataFromServer);
       
-      } 
+      } else if (message.type === 'latency' || message.type === 'throughput') {
+        setResultPage(true); // 결과 페이지로 상태 변경
+      }
     };
     // WebSocket 메시지 콜백 설정
     setOnMessageCallback(handleWebSocketMessage);
     // 초기 메시지 전송
     sendMessage('fetch_node', { type: 'fetch_node' });
-    // Function to send messages with delay
-    // const sendMessageWithDelay = () => {
-    //   sendMessage('fetch_node', { type: 'fetch_node' });
-    // };
-
-    // const delayMessageSend = setTimeout(() => {
-    //     sendMessageWithDelay(); 
-    //     return () => {
-    //         clearTimeout(delayMessageSend); 
-    //     };
-    // }, 1000); 
 
     return () => {
       setOnMessageCallback(null);
@@ -101,12 +93,17 @@ export default function NodeMeasurement({ }) {
 
     setCurrentMeasurementType(type); // 측정 유형 설정
     setMeasurementRequested(true); // 측정 요청 상태를 true로 설정
+    setButtonDisabled(true); // 버튼 비활성화 상태 설정
 
     sendMessage(type.toLowerCase(), { source, destination })
       .catch(error => {
         console.error('Error sending WebSocket message:', error);
         setMeasurementRequested(false); // 에러 발생 시 false로 재설정
       });
+      // 10초 후 버튼을 다시 활성화
+    setTimeout(() => {
+      setButtonDisabled(false);
+    }, 10000);
   };
 
   const isNodeSeqValid = (value, nodes) => {
@@ -125,7 +122,30 @@ export default function NodeMeasurement({ }) {
     setSource('');
     setDestination('');
     setError('');
-    setMeasurementRequested(false); // 결과 삭제 시 측정 요청 상태도 초기화
+    setMeasurementRequested(false);
+    setResultPage(false);
+  };
+
+  const handleStopMeasurement = async () => {
+  //   if (resultPage) {
+  //     try {
+  //       await sendMessage('cancel_measurement', { type: 'cancel_measurement', source: source, destination: destination });
+  //       console.log('Measurement stopped.');
+  //     } catch (error) {
+  //       console.error('Error stopping measurement:', error);
+  //     }
+  //   }
+  // };
+    try {
+      await sendMessage('cancel_measurement', { type: 'cancel_measurement', source: source, destination: destination });
+      console.log('Measurement stopped.');
+      setMeasurementResult(null);
+      setCurrentMeasurementType(null);
+      setMeasurementRequested(false);
+      setResultPage(false); // 결과 페이지 상태 초기화
+    } catch (error) {
+      console.error('Error stopping measurement:', error);
+    }
   };
 
   return (
@@ -165,6 +185,7 @@ export default function NodeMeasurement({ }) {
           variant="contained"
           sx={buttonStyles}
           onClick={() => handleMeasurement('Throughput')}
+          disabled={buttonDisabled} // 버튼 비활성화 상태 설정
         >
           Throughput
         </Button>
@@ -172,6 +193,7 @@ export default function NodeMeasurement({ }) {
           variant="contained"
           sx={buttonStyles}
           onClick={() => handleMeasurement('Latency')}
+          disabled={buttonDisabled} // 버튼 비활성화 상태 설정
         >
           Latency
         </Button>
@@ -186,9 +208,27 @@ export default function NodeMeasurement({ }) {
           {currentMeasurementType === 'Latency' ? (
             <LatencyChartPage latencyData={measurementResult.value} />
           ) : (
-            // <p>[{measurementResult.type}] : {measurementResult.result} ({measurementResult.loss})</p>
             <ThroughputChartPage throughputData={measurementResult} />
           )}
+        </Box>
+      )}
+
+      {measurementResult && (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2, width: '100%' }}>
+          <Button
+            variant="outlined"
+            sx={{ ...clearButtonStyles, flex: 1, margin: '0 4px' }}
+            onClick={handleClearResults}
+          >
+            Clear Results
+          </Button>
+          <Button
+            variant="outlined"
+            sx={{ ...clearButtonStyles, flex: 1, margin: '0 4px' }}
+            onClick={handleStopMeasurement}
+          >
+            Stop Measurement
+          </Button>
         </Box>
       )}
 
@@ -199,16 +239,6 @@ export default function NodeMeasurement({ }) {
           onClick={handleClearInputs}
         >
           Clear Inputs
-        </Button>
-      )}
-
-      {measurementResult && (
-        <Button
-          variant="outlined"
-          sx={clearButtonStyles}
-          onClick={handleClearResults}
-        >
-          Clear Results
         </Button>
       )}
 
