@@ -24,13 +24,7 @@ const Throughput = () => {
     setOnMessageCallback(handleWebSocketMessage);
     // 초기 메시지 전송
     sendMessage('fetch_node', { type: 'fetch_node' });
-    // const sendMessageWithDelayNode = () => {
-    //   sendMessage('fetch_node', { type: 'fetch_node' });
-    //   setTimeout(() => {
-    //     sendMessageWithDelay();
-    //   }, 1000); // 5초 텀
-    // };
-    // sendMessageWithDelayNode();
+    
     // Clean up on unmount
     return () => {
       setOnMessageCallback(null);
@@ -68,16 +62,9 @@ const Throughput = () => {
 
     // WebSocket 메시지 콜백 설정
     setOnMessageCallback(handleWebSocketMessage);
-    // nodes가 업데이트될 때만 throughput 요청
-    // const sendMessageWithDelay = () => {
-    //   sendMessage('fetch_throughput', { type: 'fetch_throughput' });
-    //   setTimeout(() => {
-    //     sendMessageWithDelay();
-    //   }, 1000); // 5초 텀
-    // };
+  
     if (nodes.length > 0) {
       sendMessage('fetch_throughput', { type: 'fetch_throughput' });
-      //sendMessageWithDelay();
     }
     return () => {
       setOnMessageCallback(null);

@@ -12,7 +12,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import MainCard from 'components/MainCard';
 import { useSetActiveItem } from 'api/menu'; 
 
-//Breadcrumbs를 이용해서 홈으로 이동했을 경우, 서랍의 해당 select된 항목도 변경되도록 해야함. 
 export default function Breadcrumbs({ navigation, title, ...others }) {
   const location = useLocation();
   const [main, setMain] = useState(null);

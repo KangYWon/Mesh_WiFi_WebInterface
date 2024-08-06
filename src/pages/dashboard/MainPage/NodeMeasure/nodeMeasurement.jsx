@@ -38,6 +38,18 @@ export default function NodeMeasurement({ }) {
     setOnMessageCallback(handleWebSocketMessage);
     // 초기 메시지 전송
     sendMessage('fetch_node', { type: 'fetch_node' });
+    // Function to send messages with delay
+    // const sendMessageWithDelay = () => {
+    //   sendMessage('fetch_node', { type: 'fetch_node' });
+    // };
+
+    // const delayMessageSend = setTimeout(() => {
+    //     sendMessageWithDelay(); 
+    //     return () => {
+    //         clearTimeout(delayMessageSend); 
+    //     };
+    // }, 1000); 
+
     return () => {
       setOnMessageCallback(null);
     };

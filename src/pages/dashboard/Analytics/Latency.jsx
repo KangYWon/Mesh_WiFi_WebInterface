@@ -52,16 +52,6 @@ const Latency = () => {
     // WebSocket 메시지 콜백 설정
     setOnMessageCallback(handleWebSocketMessage);
     sendMessage('fetch_latency', { type: 'fetch_latency' });
-     // Function to send messages with delay
-    //  const sendMessageWithDelay = () => {
-    //   sendMessage('fetch_latency', { type: 'fetch_latency' });
-    //   setTimeout(() => {
-    //     sendMessageWithDelay();
-    //   }, 1000); // 5초 텀
-    // };
-    
-    // Start sending messages
-    //sendMessageWithDelay();
 
     // Clean up on unmount
     return () => {

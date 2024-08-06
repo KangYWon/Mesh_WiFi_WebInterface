@@ -24,6 +24,16 @@ const LayerContainer = () => {
         setOnMessageCallback(handleWebSocketMessage);
         // WebSocket 연결이 열리면 초기화 메시지를 보냅니다.
         sendMessage('fetch_node', { type: 'fetch_node' });
+        // const sendMessageWithDelay = () => {
+        //     sendMessage('fetch_node', { type: 'fetch_node' });
+        // };
+
+        // const delayMessageSend = setTimeout(() => {
+        //     sendMessageWithDelay(); 
+        //     return () => {
+        //         clearTimeout(delayMessageSend); 
+        //     };
+        // }, 1000); 
 
         // Cleanup function for useEffect
         return () => {

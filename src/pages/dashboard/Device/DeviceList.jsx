@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableRow, IconButton, Paper, Ty
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
 
-const DeviceList = ({ devices, onDelete, onRestart }) => (
+const DeviceList = ({ devices = [], onDelete, onRestart }) => (
   <Paper elevation={3} style={{ padding: '20px' }}>
     <Typography variant="h5" gutterBottom>
       등록된 노드
@@ -17,32 +17,39 @@ const DeviceList = ({ devices, onDelete, onRestart }) => (
         </TableRow>
       </TableHead>
       <TableBody>
-        {devices.map(device => (
-          <TableRow key={device.id}>
-            <TableCell>{device.mac}</TableCell>
-            <TableCell style={{ textAlign: 'center' }}>
-              <IconButton 
-                onClick={() => device.status && onRestart(device.id)}
-                disabled={!device.status}
-              >
-                <CircleIcon 
-                  style={{ 
-                    color: device.status ? (device.action ? 'green' : 'rgb(217, 13, 13, 0.9)') : 'gray', 
-                    verticalAlign: 'middle' 
-                  }} 
-                />
-              </IconButton>
-            </TableCell>
-            <TableCell style={{ textAlign: 'center' }}>
-              <IconButton 
-                color="secondary" 
-                onClick={() => onDelete(device.id)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </TableCell>
-          </TableRow>
-        ))}
+        {devices.map(device => {
+          if (!device || !device.mac) {
+            // Skip rendering this row if device is invalid
+            console.error('Device is missing mac property:', device);
+            return null; 
+          }
+          return (
+            <TableRow key={device.id}>
+              <TableCell>{device.mac}</TableCell>
+              <TableCell style={{ textAlign: 'center' }}>
+                <IconButton 
+                  onClick={() => device.status && onRestart(device.id)}
+                  disabled={!device.status}
+                >
+                  <CircleIcon 
+                    style={{ 
+                      color: device.status ? (device.action ? 'green' : 'rgb(217, 13, 13, 0.9)') : 'gray', 
+                      verticalAlign: 'middle' 
+                    }} 
+                  />
+                </IconButton>
+              </TableCell>
+              <TableCell style={{ textAlign: 'center' }}>
+                <IconButton 
+                  color="secondary" 
+                  onClick={() => onDelete(device.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   </Paper>

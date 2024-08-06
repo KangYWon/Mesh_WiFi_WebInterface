@@ -2,20 +2,21 @@ import React from 'react';
 import { TextField, Button, Alert, Paper, Typography } from '@mui/material';
 import { textFieldStyles, buttonStyles } from 'src/components/styles.js';
 
-const DeviceForm = ({ newDeviceMac, error, onChange, onSubmit }) => (
+const DeviceForm = ({ newDeviceMac, error, onChange, onSubmit, onFocus }) => (
   <Paper elevation={3} style={{ padding: '20px' }}>
     <Typography variant="h5" gutterBottom>
-      새 노드 등록하기
+      노드 등록하기
     </Typography>
     {error && <Alert severity="error">{error}</Alert>}
     <form onSubmit={onSubmit}>
       <TextField
-        label="MAC Address"
+        label="Device MAC Address"
         variant="outlined"
         fullWidth
         margin="normal"
         value={newDeviceMac}
         onChange={onChange}
+        onFocus={onFocus}
         error={!!error}
         helperText={error}
         sx={textFieldStyles}
