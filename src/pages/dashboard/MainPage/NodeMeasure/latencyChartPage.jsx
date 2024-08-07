@@ -15,18 +15,18 @@ const LatencyChartPage = ({ latencyData, backgroundColor, borderColor, isError =
   const averageLatency = calculateAverage(latencyData);
 
   return (
-    <Box sx={{ padding: '20px' }}>
+    <Box sx={{ padding: '15px' }}>
       <Typography variant="h4" gutterBottom>
         Latency Test Page
       </Typography>
-      
+
       {isError && (
-        <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
+        <Typography variant="body1" color="error" sx={{ marginBottom: 0 }}>
           ※ Topology에 변경이 생겼습니다. ※
         </Typography>
       )}
 
-      <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray', background: '#f9f9f9'}}>
+      <Box sx={{ marginTop: 1.5, padding: 2, border: '1px solid gray', background: '#f9f9f9'}}>
         <Typography variant="h6">Latency Chart</Typography>
         <LatencyChart 
           data={latencyData} 

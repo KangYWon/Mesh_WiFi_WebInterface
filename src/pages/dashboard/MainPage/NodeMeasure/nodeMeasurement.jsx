@@ -102,8 +102,10 @@ export default function NodeMeasurement({ }) {
     setMeasurementRequested(true); // 측정 요청 상태를 true로 설정
     setButtonDisabled(true); // 버튼 비활성화 상태 설정
     // 측정 요청 전에 데이터 초기화
-    // setLatencyData([]);
-    // setThroughputData({ result: [], loss: [] });
+    setLatencyData([]);
+    setThroughputData({ result: [], loss: [] });
+    setMeasurementResult(null);
+    setResultPage(false);
 
     sendMessage(type.toLowerCase(), { source, destination })
       .catch(error => {
@@ -146,13 +148,13 @@ export default function NodeMeasurement({ }) {
       sendMessage('cancel_measurement', { type: 'cancel_measurement', source: source, destination: destination });
       
       console.log('Measurement stopped.');
-      setMeasurementResult(null);
-      setCurrentMeasurementType(null);
+      // setMeasurementResult(null);
+      // setCurrentMeasurementType(null);
+      // setMeasurementRequested(false);
+      // setResultPage(false); // 결과 페이지 상태 초기화
+      // setIsError(false); // 에러 상태 해제
       setMeasurementRequested(false);
-      setResultPage(false); // 결과 페이지 상태 초기화
-      //setLatencyData([]); // Latency 데이터 초기화
-      //setThroughputData({ result: [], loss: [] }); // Throughput 데이터 초기화
-      setIsError(false); // 에러 상태 해제
+      setIsError(false);
     } catch (error) {
       console.error('Error stopping measurement:', error);
       setIsError(true); 
@@ -239,10 +241,10 @@ export default function NodeMeasurement({ }) {
 
       {measurementResult && (
         <Box sx={{ marginTop: 1, padding: 2, border: '1px solid gray' }}>
-          <h3>[ Result ] </h3>
-          <p>
-            Source Node [{source}] ➔ Destination Node [{destination}]
-          </p>
+        <h3 style={{ marginBottom: '8px' }}>[ Result ]</h3> 
+        <p style={{ marginTop: 0, marginBottom: '10px' }}>
+          Source Node [{source}] ➔ Destination Node [{destination}]
+        </p>
           {currentMeasurementType === 'Latency' ? (
             <LatencyChartPage 
               latencyData={latencyData} 

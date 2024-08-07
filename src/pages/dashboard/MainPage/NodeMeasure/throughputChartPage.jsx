@@ -9,18 +9,18 @@ const ThroughputChartPage = ({ throughputData, lossData, backgroundColor, border
   const formatNumber = (num) => parseFloat(num).toFixed(4);
 
   return (
-    <Box sx={{ padding: '20px' }}>
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ padding: '15px' }}>
+      <Typography variant="h4" gutterBottom sx={{ marginBottom: 0 }}>
         Throughput Test Page
       </Typography>
 
       {isError && (
-        <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
+         <Typography variant="body1" color="error" sx={{ marginBottom: 0 }}>
           ※ Topology에 변경이 생겼습니다. ※
         </Typography>
       )}
 
-      <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray', background: '#f9f9f9' }}>
+      <Box sx={{ marginTop: 1.5, padding: 2, border: '1px solid gray', background: '#f9f9f9' }}>
         <Typography variant="h6">Throughput Chart</Typography>
         <ThroughputChart 
           data={throughputData.map(formatNumber)} // 데이터 포맷 적용
