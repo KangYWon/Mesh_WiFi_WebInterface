@@ -18,8 +18,13 @@ export default function NodeMeasurement({ }) {
   const [currentMeasurementType, setCurrentMeasurementType] = useState(null);
   const [measurementRequested, setMeasurementRequested] = useState(false);
   const [error, setError] = useState('');
+
   const [resultPage, setResultPage] = useState(false); // 현재 페이지가 결과 페이지인지 상태
   const [buttonDisabled, setButtonDisabled] = useState(false); // 버튼 비활성화 상태
+  const [latencyData, setLatencyData] = useState([]); // Latency 데이터를 저장할 상태
+  const [throughputData, setThroughputData] = useState({ result: [], loss: [] }); // Throughput 
+
+  const [isError, setIsError] = useState(false); // 에러 상태를 관리하는 상태
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,48 +38,50 @@ export default function NodeMeasurement({ }) {
         console.log('Fetched Node:', nodeDataFromServer); // 받은 데이터 확인
         setNodes(nodeDataFromServer);
       
-      } else if (message.type === 'latency' || message.type === 'throughput') {
-        setResultPage(true); // 결과 페이지로 상태 변경
+      } else if (message.type === 'latency') {
+        if (message.data && message.data.result != null) {
+          setLatencyData(prevData => [...prevData, parseFloat(message.data.result)]);
+          setMeasurementResult({ type: 'Latency', value: parseFloat(message.data.result) });
+          setResultPage(true); // 결과 페이지로 상태 변경
+          setIsError(false); // 에러 상태 해제
+        } else {
+          setError('Latency data is missing or invalid');
+          setIsError(true); // 에러 상태 설정
+        }
+      } else if (message.type === 'throughput') {
+        const { data } = message; // 데이터 추출
+        const { result, loss } = data;
+    
+        if (typeof result === 'number' && typeof loss === 'number') {
+          setThroughputData(prevData => ({
+            result: [...prevData.result, result],
+            loss: [...prevData.loss, loss]
+          }));
+          setMeasurementResult({
+            type: 'Throughput',
+            result: result,
+            loss: loss
+          });
+          setResultPage(true); // 결과 페이지로 상태 변경
+          setIsError(false); // 에러 상태 해제
+        } else {
+          setError('Throughput data is missing or invalid');
+          setIsError(true); // 에러 상태 설정
+        }
+      } else if (message.type === 'error') {
+        setError(message.data || 'An unknown error occurred');
+        setIsError(true); // 에러 상태 설정
       }
     };
+
     // WebSocket 메시지 콜백 설정
     setOnMessageCallback(handleWebSocketMessage);
-    // 초기 메시지 전송
     sendMessage('fetch_node', { type: 'fetch_node' });
 
     return () => {
       setOnMessageCallback(null);
     };
   }, []);
-
-  useEffect(() => {
-    setOnMessageCallback((message) => {
-      try {
-        const { type, data } = message;
-
-        if (measurementRequested) { // 측정 요청이 있을 때만 결과 처리
-          if (type === 'latency') {
-            const { result } = data;
-            // latency 데이터 업데이트
-            setMeasurementResult({ type: 'Latency', value: result });
-          } else if (type === 'throughput') {
-            const { result, loss } = data;
-            // throughput 데이터 업데이트
-            setMeasurementResult({ 
-              type: 'Throughput', 
-              result: result, 
-              loss: loss
-            });
-          } else {
-            console.error('Unexpected message type:', type);
-          }
-          setMeasurementRequested(false); // 결과 처리 후 다시 false로 설정
-        }
-      } catch (error) {
-        console.error('Error processing WebSocket message:', error);
-      }
-    });
-  }, [measurementRequested]); // measurementRequested를 의존성 배열에 추가
 
   const handleMeasurement = (type) => {
     // 입력값 유효성 검사
@@ -94,11 +101,16 @@ export default function NodeMeasurement({ }) {
     setCurrentMeasurementType(type); // 측정 유형 설정
     setMeasurementRequested(true); // 측정 요청 상태를 true로 설정
     setButtonDisabled(true); // 버튼 비활성화 상태 설정
+    // 측정 요청 전에 데이터 초기화
+    // setLatencyData([]);
+    // setThroughputData({ result: [], loss: [] });
 
     sendMessage(type.toLowerCase(), { source, destination })
       .catch(error => {
         console.error('Error sending WebSocket message:', error);
+        setError('Failed to send measurement request. Please try again.');
         setMeasurementRequested(false); // 에러 발생 시 false로 재설정
+        setIsError(true); // 에러 상태 설정
       });
       // 10초 후 버튼을 다시 활성화
     setTimeout(() => {
@@ -124,91 +136,128 @@ export default function NodeMeasurement({ }) {
     setError('');
     setMeasurementRequested(false);
     setResultPage(false);
+    setLatencyData([]);
+    setThroughputData({ result: [], loss: [] }); // Throughput 데이터 초기화
+    setIsError(false); // 에러 상태 해제
   };
 
   const handleStopMeasurement = async () => {
-  //   if (resultPage) {
-  //     try {
-  //       await sendMessage('cancel_measurement', { type: 'cancel_measurement', source: source, destination: destination });
-  //       console.log('Measurement stopped.');
-  //     } catch (error) {
-  //       console.error('Error stopping measurement:', error);
-  //     }
-  //   }
-  // };
     try {
-      await sendMessage('cancel_measurement', { type: 'cancel_measurement', source: source, destination: destination });
+      sendMessage('cancel_measurement', { type: 'cancel_measurement', source: source, destination: destination });
+      
       console.log('Measurement stopped.');
       setMeasurementResult(null);
       setCurrentMeasurementType(null);
       setMeasurementRequested(false);
       setResultPage(false); // 결과 페이지 상태 초기화
+      //setLatencyData([]); // Latency 데이터 초기화
+      //setThroughputData({ result: [], loss: [] }); // Throughput 데이터 초기화
+      setIsError(false); // 에러 상태 해제
     } catch (error) {
       console.error('Error stopping measurement:', error);
+      setIsError(true); 
     }
   };
 
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '16px' }}>
       <h2>Node Measurement</h2>
-      <TextField
-        label="Source Node"
-        value={source}
-        onChange={(e) => {
-          setSource(e.target.value);
-          setError('');
-        }}
-        fullWidth
-        margin="normal"
-        error={!!error}
-        helperText={error}
-        disabled={!!measurementResult} // 결과가 있으면 비활성화
-        sx={textFieldStyles}
-      />
-      <TextField
-        label="Destination Node"
-        value={destination}
-        onChange={(e) => {
-          setDestination(e.target.value);
-          setError('');
-        }}
-        fullWidth
-        margin="normal"
-        error={!!error}
-        helperText={error}
-        disabled={!!measurementResult} 
-        sx={textFieldStyles}
-        ></TextField>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-        <Button
-          variant="contained"
-          sx={buttonStyles}
-          onClick={() => handleMeasurement('Throughput')}
-          disabled={buttonDisabled} // 버튼 비활성화 상태 설정
+      {/* Source Node와 Destination Node 필드가 resultPage가 false일 때만 렌더링됨 */}
+      {!resultPage && (
+        <>
+          <TextField
+            label="Source Node"
+            value={source}
+            onChange={(e) => {
+              setSource(e.target.value);
+              setError('');
+            }}
+            fullWidth
+            margin="normal"
+            error={!!error}
+            helperText={error}
+            disabled={!!measurementResult} // 결과가 있으면 비활성화
+            sx={textFieldStyles}
+          />
+          <TextField
+            label="Destination Node"
+            value={destination}
+            onChange={(e) => {
+              setDestination(e.target.value);
+              setError('');
+            }}
+            fullWidth
+            margin="normal"
+            error={!!error}
+            helperText={error}
+            disabled={!!measurementResult}
+            sx={textFieldStyles}
+          />
+        </>
+      )}
+
+      {/* 측정 버튼들이 resultPage가 false일 때만 렌더링됨 */}
+      {!resultPage && (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+          <Button
+            variant="contained"
+            sx={buttonStyles}
+            onClick={() => handleMeasurement('Throughput')}
+            disabled={buttonDisabled} // 버튼 비활성화 상태 설정
+          >
+            Throughput
+          </Button>
+          <Button
+            variant="contained"
+            sx={buttonStyles}
+            onClick={() => handleMeasurement('Latency')}
+            disabled={buttonDisabled} // 버튼 비활성화 상태 설정
+          >
+            Latency
+          </Button>
+        </Box>
+      )}
+
+      {error && (
+        <Box
+          sx={{
+            marginTop: 2,
+            padding: 1.5, // 상자 내부 패딩 줄이기
+            border: '1px solid red',
+            backgroundColor: '#fdd',
+            width: '100%', // 상자의 너비 조정
+            maxWidth: '400px', // 상자의 최대 너비 설정
+            fontSize: '0.87rem', // 글자 크기 조정
+            wordWrap: 'break-word' // 긴 단어가 상자를 넘지 않도록 처리
+          }}
         >
-          Throughput
-        </Button>
-        <Button
-          variant="contained"
-          sx={buttonStyles}
-          onClick={() => handleMeasurement('Latency')}
-          disabled={buttonDisabled} // 버튼 비활성화 상태 설정
-        >
-          Latency
-        </Button>
-      </Box>
+          <h3>Error</h3>
+          <p>{error}</p>
+        </Box>
+      )}
 
       {measurementResult && (
-        <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray' }}>
+        <Box sx={{ marginTop: 1, padding: 2, border: '1px solid gray' }}>
           <h3>[ Result ] </h3>
           <p>
             Source Node [{source}] ➔ Destination Node [{destination}]
           </p>
           {currentMeasurementType === 'Latency' ? (
-            <LatencyChartPage latencyData={measurementResult.value} />
+            <LatencyChartPage 
+              latencyData={latencyData} 
+              backgroundColor={isError ? 'rgba(255,99,132,0.2)' : 'rgba(75,192,192,0.4)'} 
+              borderColor={isError ? 'rgba(255,99,132,1)' : 'rgba(75,192,192,1)'} 
+              isError={isError}
+            />
           ) : (
-            <ThroughputChartPage throughputData={measurementResult} />
+            <ThroughputChartPage 
+              throughputData={throughputData.result} 
+              lossData={throughputData.loss}
+              backgroundColor={isError ? 'rgba(255,99,132,0.2)' : 'rgba(75,192,192,0.4)'} 
+              borderColor={isError ? 'rgba(255,99,132,1)' : 'rgba(75,192,192,1)'} 
+              isError={isError}
+            />
           )}
         </Box>
       )}

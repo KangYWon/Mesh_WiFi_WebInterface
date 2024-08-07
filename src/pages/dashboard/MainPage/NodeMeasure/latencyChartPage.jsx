@@ -1,37 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import LatencyChart from 'src/components/LatencyChart.jsx'; 
 import { Typography } from '@mui/material';
-import { setOnMessageCallback } from 'src/api/webSocket.js';
 
-const LatencyChartPage = () => {
-  const [latencyData, setLatencyData] = useState([]);
-  const [measurementResult, setMeasurementResult] = useState(null);
-
-  useEffect(() => {
-    setOnMessageCallback((message) => {
-      console.log('WebSocket Message:', message); // WebSocket 메시지 확인
-      try {
-        const { type, data } = message;
-        
-        if (type === 'latency') {
-          const result = data.result;
-          setLatencyData(prevData => {
-            const updatedData = [...prevData, parseFloat(result)];
-
-            // 평균 계산
-            const avg = calculateAverage(updatedData);
-            setMeasurementResult({ type: 'Latency', value: avg });
-            return updatedData;
-          });
-        } else {
-          console.error('Unexpected message type:', type);
-        }
-      } catch (error) {
-        console.error('Error processing WebSocket message:', error);
-      }
-    });
-   }, []);
+const LatencyChartPage = ({ latencyData, backgroundColor, borderColor, isError = false }) => {
 
   // 배열의 평균 계산 함수
   const calculateAverage = (data) => {
@@ -40,27 +12,38 @@ const LatencyChartPage = () => {
     return sum / data.length;
   };
 
+  const averageLatency = calculateAverage(latencyData);
+
   return (
     <Box sx={{ padding: '20px' }}>
       <Typography variant="h4" gutterBottom>
         Latency Test Page
       </Typography>
+      
+      {isError && (
+        <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
+          ※ Topology에 변경이 생겼습니다. ※
+        </Typography>
+      )}
 
-      <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray' }}>
+      <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray', background: '#f9f9f9'}}>
         <Typography variant="h6">Latency Chart</Typography>
-        <LatencyChart data={latencyData} />
+        <LatencyChart 
+          data={latencyData} 
+          backgroundColor={backgroundColor} 
+          borderColor={borderColor}
+        />
       </Box>
 
-      {measurementResult && (
-        <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray' }}>
-          <Typography variant="h5">Result</Typography>
-          <Typography>
-            [{measurementResult.type}] : {measurementResult.value.toFixed(2)} ms
-          </Typography>
-        </Box>
-      )}
+      <Box sx={{ marginTop: 2, padding: 2, border: '1px solid gray' }}>
+        <Typography variant="h5">Result</Typography>
+        <Typography>
+          [Latency] : {averageLatency.toFixed(2)} ms
+        </Typography>
+      </Box>
     </Box>
   );
 };
+
 
 export default LatencyChartPage;

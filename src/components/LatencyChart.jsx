@@ -1,11 +1,13 @@
-// src/components/LatencyChart.jsx
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
+
 Chart.register(...registerables);
 
-const LatencyChart = ({ data = [] }) => {
-  const chartRef = useRef(null);
+const LatencyChart = ({ data = [], backgroundColor = 'rgba(75,192,192,0.4)', borderColor = 'rgba(75,192,192,1)', isError = false}) => {
+  // Error 상태에 따라 색상 설정
+  const errorBackgroundColor = 'rgba(255,99,132,0.2)'; // 에러 상태 배경색
+  const errorBorderColor = 'rgba(255,99,132,1)'; // 에러 상태 테두리색
 
   const chartData = {
     labels: Array.from({ length: data.length }, (_, i) => i + 1), // 1부터 데이터 길이까지의 라벨 생성
@@ -14,8 +16,9 @@ const LatencyChart = ({ data = [] }) => {
         label: 'Latency (ms)',
         data: data,
         fill: false,
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
+        backgroundColor: isError ? errorBackgroundColor : backgroundColor,
+        borderColor: isError ? errorBorderColor : borderColor,
+        borderWidth: 2, // 테두리 두께 설정
       },
     ],
   };
@@ -34,20 +37,9 @@ const LatencyChart = ({ data = [] }) => {
     },
   };
 
-  useEffect(() => {
-    const chartInstance = chartRef.current;
-
-    if (chartInstance) {
-      // 데이터가 업데이트 될 때마다 새로운 데이터를 차트에 추가
-      chartInstance.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
-      chartInstance.data.datasets[0].data = data;
-      chartInstance.update();
-    }
-  }, [data]);
-
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <Line ref={chartRef} data={chartData} options={chartOptions} />
+      <Line data={chartData} options={chartOptions} />
     </div>
   );
 };
