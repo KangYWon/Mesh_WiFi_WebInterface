@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 // material-ui
 import { ButtonBase } from '@mui/material';
 import Stack from '@mui/material/Stack';
+import { handlerActiveItem } from 'api/menu'; // 상태 업데이트를 위한 함수 임포트
 
 // project import
 import Logo from './LogoMain'; //실제 로고 이미지 사용, 구현하는 파일
@@ -19,6 +20,11 @@ import config from 'config';
 // ==============================|| MAIN LOGO ||============================== //
 
 const LogoSection = ({ sx, to }) => {
+  const handleClick = () => {
+    // 'Dashboard'만 선택되도록 상태를 업데이트합니다.
+    handlerActiveItem('dashboard');
+  };
+
   return (
     <ButtonBase 
       disableRipple 
@@ -28,6 +34,7 @@ const LogoSection = ({ sx, to }) => {
         ...sx, // 기존의 sx 스타일을 유지
         transform: 'translateY(13px)' // 아래로 10px 이동
       }}
+      onClick={handleClick} // 클릭 시 상태를 업데이트하는 핸들러 호출
     >
       <Stack direction="row" spacing={1} alignItems="center">
         <Logo />
