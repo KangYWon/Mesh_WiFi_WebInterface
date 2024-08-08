@@ -99,28 +99,20 @@ const RegisterDevice = () => {
       );
   
       // 서버에 메시지 전송 및 응답 받기
-      const response = await sendMessage('restart', { type: 'restart', id: id });
+      const response = sendMessage('restart', { type: 'restart', id: id });
       console.log('Server response for restart:', response);
 
-      // 서버 응답에서 action 값을 확인하고 상태 업데이트
-      if (response && response.action !== undefined) {
-        // 서버 응답이 예상한 형태일 경우 상태 업데이트
+       // 서버 응답에서 action 값을 확인하고 상태 업데이트
+      if (response && response.action === true) {
+        // 서버 응답이 성공을 나타낼 경우 상태 업데이트
         setDevices(prevDevices => 
           prevDevices.map(device => 
-            device.id === id ? { ...device, status: true, action: response.action === 1 } : device
+            device.id === id ? { ...device, status: true, action: true } : device
           )
         );
-       // 에러 상태를 비워줍니다 (성공 시)
-       setError('');
-      } else {
-        // 응답이 예상과 다를 경우
-        setDevices(prevDevices => 
-          prevDevices.map(device => 
-            device.id === id ? { ...device, status: false, action: true } : device
-          )
-        );
-        setError('장치 재시작 응답이 예상과 다릅니다.');
-      }
+        // 에러 상태를 비워줍니다 (성공 시)
+        setError('');
+      } 
     } catch (error) {
       console.error('Error restarting device:', error);
       setDevices(prevDevices => 

@@ -38,15 +38,32 @@ const ThroughputChart = ({ data = [], loss = [], backgroundColor = 'rgba(75,192,
           label: function (context) {
             const label = context.dataset.label || '';
             const lossValue = loss[context.dataIndex] || 0;
-            if (errorMessage) {
+            if (isError && errorMessage) {
               return `Error: ${errorMessage}`;
             }
-            return `${label}: ${context.parsed.y} Mbps (Loss: ${lossValue}%)`;
+            // 줄 바꿈을 배열로 처리
+            return [
+              `${label}: ${context.parsed.y} Mbps`,
+              `(Loss: ${lossValue}%)`
+            ];
           }
         }
       }
     }
   };
+  //   plugins: {
+  //     tooltip: {
+  //       callbacks: {
+  //         label: function (context) {
+  //           const label = context.dataset.label || '';
+  //           const lossValue = loss[context.dataIndex] || 0;
+  //           return `${label}: ${context.parsed.y} Mbps`
+  //                   `$(Loss: ${lossValue}%)`;
+  //         }
+  //       }
+  //     }
+  //   }
+  // };
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>

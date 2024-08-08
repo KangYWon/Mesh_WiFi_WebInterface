@@ -37,7 +37,13 @@ export default function NodeMeasurement({ }) {
         const nodeDataFromServer = message.data;
         console.log('Fetched Node:', nodeDataFromServer); // 받은 데이터 확인
         setNodes(nodeDataFromServer);
-      
+
+        setError('Network topology has changed. Measurement is temporarily disabled.');
+        setButtonDisabled(true); // 버튼 비활성화 상태 설정
+        setTimeout(() => {
+          setButtonDisabled(false); // 5초 후 버튼 다시 활성화
+          setError('');
+        }, 3000);
       } else if (message.type === 'latency') {
         if (message.data && message.data.result != null) {
           setLatencyData(prevData => [...prevData, parseFloat(message.data.result)]);
@@ -68,10 +74,14 @@ export default function NodeMeasurement({ }) {
           setError('Throughput data is missing or invalid');
           setIsError(true); // 에러 상태 설정
         }
+      } else if (message.type === 'measurement_error') {
+        // 새로운 에러 타입 처리
+        setError('Topology changed during measurement.');
+        setIsError(true); // 에러 상태 설정
       } else if (message.type === 'error') {
         setError(message.data || 'An unknown error occurred');
         setIsError(true); // 에러 상태 설정
-      }
+      } 
     };
 
     // WebSocket 메시지 콜백 설정
@@ -95,7 +105,7 @@ export default function NodeMeasurement({ }) {
       setError('Source and Destination should be valid node sequences');
       return;
     } else {
-    setError('');
+      setError('');
     } 
 
     setCurrentMeasurementType(type); // 측정 유형 설정
@@ -148,11 +158,6 @@ export default function NodeMeasurement({ }) {
       sendMessage('cancel_measurement', { type: 'cancel_measurement', source: source, destination: destination });
       
       console.log('Measurement stopped.');
-      // setMeasurementResult(null);
-      // setCurrentMeasurementType(null);
-      // setMeasurementRequested(false);
-      // setResultPage(false); // 결과 페이지 상태 초기화
-      // setIsError(false); // 에러 상태 해제
       setMeasurementRequested(false);
       setIsError(false);
     } catch (error) {
@@ -221,7 +226,7 @@ export default function NodeMeasurement({ }) {
         </Box>
       )}
 
-      {error && (
+      {error && isError && (
         <Box
           sx={{
             marginTop: 2,

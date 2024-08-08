@@ -74,7 +74,7 @@ const LayerContainer = () => {
               <Tree
                 data={treeData}
                 orientation="vertical"
-                translate={{ x: 150, y: 100 }}
+                translate={{ x: 210, y: 150 }}
                 nodeSize={{ x: 200, y: 200 }}
                 separation={{ siblings: 1, nonSiblings: 2 }}
                 pathFunc="diagonal"
