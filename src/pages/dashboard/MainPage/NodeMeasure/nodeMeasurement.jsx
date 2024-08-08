@@ -8,7 +8,7 @@ import ThroughputChartPage from 'src/pages/dashboard/MainPage/NodeMeasure/throug
 
 import { useNavigate } from 'react-router-dom';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
-import { textFieldStyles, buttonStyles, clearButtonStyles, analyticsButtonStyles } from 'src/components/styles.js';
+import { textFieldStyles, buttonStyles, clearButtonStyles, analyticsButtonStyles, stopButtonStyles, activeStopButtonStyles } from 'src/components/styles.js';
 
 export default function NodeMeasurement({ }) {
   const [nodes, setNodes] = useState([]);
@@ -23,8 +23,10 @@ export default function NodeMeasurement({ }) {
   const [buttonDisabled, setButtonDisabled] = useState(false); // 버튼 비활성화 상태
   const [latencyData, setLatencyData] = useState([]); // Latency 데이터를 저장할 상태
   const [throughputData, setThroughputData] = useState({ result: [], loss: [] }); // Throughput 
+  const [isStopMeasurementClicked, setIsStopMeasurementClicked] = useState(false);
 
   const [isError, setIsError] = useState(false); // 에러 상태를 관리하는 상태
+  const [isActive, setIsActive] = useState({ clear: false, stop: false }); // 버튼 활성화 상태
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,12 +40,14 @@ export default function NodeMeasurement({ }) {
         console.log('Fetched Node:', nodeDataFromServer); // 받은 데이터 확인
         setNodes(nodeDataFromServer);
 
-        setError('Network topology has changed. Measurement is temporarily disabled.');
-        setButtonDisabled(true); // 버튼 비활성화 상태 설정
-        setTimeout(() => {
-          setButtonDisabled(false); // 5초 후 버튼 다시 활성화
-          setError('');
-        }, 3000);
+        if (!resultPage) {  // resultPage가 false인 경우에만 에러를 표시
+          setError('Network topology has changed. Measurement is temporarily disabled.');
+          setButtonDisabled(true); // 버튼 비활성화 상태 설정
+          setTimeout(() => {
+            setButtonDisabled(false); // 5초 후 버튼 다시 활성화
+            setError('');
+          }, 3000);
+        }
       } else if (message.type === 'latency') {
         if (message.data && message.data.result != null) {
           setLatencyData(prevData => [...prevData, parseFloat(message.data.result)]);
@@ -147,6 +151,7 @@ export default function NodeMeasurement({ }) {
     setDestination('');
     setError('');
     setMeasurementRequested(false);
+    setIsStopMeasurementClicked(false);
     setResultPage(false);
     setLatencyData([]);
     setThroughputData({ result: [], loss: [] }); // Throughput 데이터 초기화
@@ -160,6 +165,12 @@ export default function NodeMeasurement({ }) {
       console.log('Measurement stopped.');
       setMeasurementRequested(false);
       setIsError(false);
+
+      if (!isStopMeasurementClicked) {
+        // Stop Measurement 로직 추가
+        setIsStopMeasurementClicked(true);
+      }
+
     } catch (error) {
       console.error('Error stopping measurement:', error);
       setIsError(true); 
@@ -280,8 +291,18 @@ export default function NodeMeasurement({ }) {
           </Button>
           <Button
             variant="outlined"
-            sx={{ ...clearButtonStyles, flex: 1, margin: '0 4px' }}
+            sx={{
+              ...stopButtonStyles,
+              ...(isActive.stop && activeStopButtonStyles), // 클릭된 버튼의 색상 적용
+              flex: 1,
+              margin: '0 4px',
+              '&.Mui-disabled': {
+                borderColor: 'red !important',
+                color: 'red !important',
+              }
+            }}
             onClick={handleStopMeasurement}
+            disabled={isStopMeasurementClicked} // 클릭된 후 비활성화
           >
             Stop Measurement
           </Button>

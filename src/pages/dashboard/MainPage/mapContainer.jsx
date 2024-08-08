@@ -11,14 +11,13 @@ import toggleIcon from 'src/assets/images/icons/nodes2.png';
 // Default center coordinates
 const center = [36.103774, 129.388557];
 
-const CustomControl = ({ toggleImage, showImage }) => {
+const CustomControl = ({ toggleImage }) => {
   const map = useMap();
   
   useEffect(() => {
     const control = L.control({ position: 'topleft' }); // Change position as needed
     control.onAdd = () => {
       const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-       //${showImage ? '≡' : '≡'}
       div.innerHTML = `
         <button style="width: 30px; height: 30px; background: white; border: none; display: flex; justify-content: center; align-items: center;">
           <img src="${toggleIcon}" alt="Toggle" style="width: 20px; height: 20px;" />
@@ -33,7 +32,7 @@ const CustomControl = ({ toggleImage, showImage }) => {
     return () => {
       control.remove();
     };
-  }, [map, toggleImage, showImage]);
+  }, [map, toggleImage]);
 
   return null;
 };
@@ -128,10 +127,10 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <CustomControl toggleImage={toggleImage} showImage={showImage} />
+        <CustomControl toggleImage={toggleImage} />
         {nodes.map(node => (
           <CircleMarker
-            key={node.seq + (openedPopupNode?.seq === node.seq ? '-selected' : '')}
+            key={`${node.seq}-${node.my_mac}`} // seq와 my_mac 조합으로 고유한 key 생성
             center={[node.latitude, node.longitude]}
             radius={15}
             color={openedPopupNode?.seq === node.seq ? 'black' : layerColors[node.layer]}
@@ -151,7 +150,7 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
             </Popup>
           </CircleMarker>
         ))}
-        {connections.map((conn, index) => {
+        {connections.map((conn) => {
           const fromNode = nodes.find(node => node.my_mac === conn.from);
           const toNode = nodes.find(node => node.my_mac === conn.to);
           if (!fromNode || !toNode) return null;
@@ -159,8 +158,9 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
             [fromNode.latitude, fromNode.longitude],
             [toNode.latitude, toNode.longitude]
           ];
+          const connectionKey = `${conn.from}-${conn.to}`; // 고유한 key 생성
           return (
-            <React.Fragment key={index}>
+            <React.Fragment key={connectionKey}>
               <ArrowheadPolyline positions={latlngs} color="black" />
             </React.Fragment>
           );

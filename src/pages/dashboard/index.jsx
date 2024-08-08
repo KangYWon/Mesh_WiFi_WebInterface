@@ -48,19 +48,19 @@ export default function DashboardLayout() {
               style={{ position: 'relative', height: '100%', width: '100%' }}
               resizerStyle={{ background: '#f0f0f0', width: '10px', cursor: 'col-resize' }}
             >
-              {/* Left Pane */}
+              {/* 왼쪽 Pane */}
               <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <Box sx={{ flex: '0 1 600px', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                    <MapContainer style={{ width: '100%', height: '100%' }} />
+                <Box sx={{ flex: '0 1 50%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  <MapContainer style={{ width: '100%', height: '100%' }} />
                 </Box>
-                <Box sx={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
+                <Box sx={{ flex: '1 1 50%', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
                   <Paper sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%', padding: '20px', height: '100%' }}>
                     <NodeMeasurement style={{ width: '100%', height: '100%' }} />
                   </Paper>
                 </Box>
               </Box>
               
-              {/* Right Pane */}
+              {/* 오른쪽 Pane */}
               <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', borderLeft: '1px solid #ccc', flexGrow: 1 }}>
                 <Paper sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', padding: '5px', height: '100%' }}>
                   <LayerContainer style={{ width: '100%', height: '100%', overflow: 'auto' }} />

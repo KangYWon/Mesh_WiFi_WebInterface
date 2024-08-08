@@ -73,3 +73,45 @@ export const textFieldStyles = {
       pointerEvents: 'none',
     },
   };
+
+  export const stopButtonStyles = {
+    borderColor: 'black', // 기본 테두리 색상
+    color: 'black', // 기본 텍스트 색상
+    '&:hover': {
+      borderColor: 'red',
+      color: 'red',
+    },
+    '&:active': {
+      borderColor: 'red',
+      color: 'white',
+      backgroundColor: 'red',
+    },
+    '&::after': {
+      content: '""',
+      display: 'block',
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      boxShadow: '0 0 5px 5px rgba(230, 96, 96, 0.9)',
+      borderRadius: 'inherit',
+      pointerEvents: 'none',
+    },
+    position: 'relative', // Absolute positioning of the after pseudo-element
+  };
+
+  export const activeStopButtonStyles = {
+    backgroundColor: 'red !important',
+    color: 'white !important',
+    borderColor: 'red !important',
+    '&::after': {
+      content: '""',
+      display: 'block',
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      boxShadow: '0 0 5px 5px rgba(230, 96, 96, 0.9)',
+      borderRadius: 'inherit',
+      pointerEvents: 'none',
+    },
+  };
+  

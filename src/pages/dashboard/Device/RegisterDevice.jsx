@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grid, Typography  } from '@mui/material';
+import { Container, Grid, Typography } from '@mui/material';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js'; 
 import DeviceList from './DeviceList';
 import DeviceForm from './DeviceForm';
 
-//자체에서 true에서 false로 바꾼다. (서버에서는 true값 유지하고 보내주면 나는 true가 되는 식. )
 const RegisterDevice = () => {
   const [devices, setDevices] = useState([]);
   const [newDeviceMac, setNewDeviceMac] = useState('');
   const [error, setError] = useState('');
-  const [waitingForFetchDevices, setWaitingForFetchDevices] = useState(false);
 
   useEffect(() => {
     fetchDevices();
@@ -82,11 +80,7 @@ const RegisterDevice = () => {
 
   const handleDeleteDevice = async (id) => {
     await sendMessage('delete_device', { id });
-      setDevices(prevDevices => prevDevices.filter(device => device.id !== id));
-    // } catch (error) {
-    //   console.error('Error deleting device:', error);
-    //   setError('장치 삭제에 실패했습니다.');
-    // }
+    setDevices(prevDevices => prevDevices.filter(device => device.id !== id));
   };
 
   const handleRestartDevice = async (id) => {
@@ -102,7 +96,7 @@ const RegisterDevice = () => {
       const response = sendMessage('restart', { type: 'restart', id: id });
       console.log('Server response for restart:', response);
 
-       // 서버 응답에서 action 값을 확인하고 상태 업데이트
+      // 서버 응답에서 action 값을 확인하고 상태 업데이트
       if (response && response.action === true) {
         // 서버 응답이 성공을 나타낼 경우 상태 업데이트
         setDevices(prevDevices => 
@@ -129,6 +123,16 @@ const RegisterDevice = () => {
     setNewDeviceMac(''); 
   };
 
+  const handleReorder = (result) => {
+    if (!result.destination) return;
+
+    const reorderedDevices = Array.from(devices);
+    const [removed] = reorderedDevices.splice(result.source.index, 1);
+    reorderedDevices.splice(result.destination.index, 0, removed);
+
+    setDevices(reorderedDevices);
+  };
+
   return (
     <Container maxWidth="lg" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px' }}>
       <Typography variant="h4" gutterBottom align="center" style={{ marginBottom: '30px' }}>
@@ -140,6 +144,7 @@ const RegisterDevice = () => {
             devices={devices} 
             onDelete={handleDeleteDevice} 
             onRestart={handleRestartDevice} 
+            onReorder={handleReorder} 
           />
         </Grid>
         <Grid item xs={12} md={6}>
