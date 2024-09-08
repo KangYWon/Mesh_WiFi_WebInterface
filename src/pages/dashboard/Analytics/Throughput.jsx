@@ -85,7 +85,7 @@ const Throughput = () => {
 
   const getBackgroundColor = (source_seq, destination_seq) => {
     if (source_seq === destination_seq) {
-      return ''; // 자기 자신인 경우 색상 없음
+      return 'rgba(216, 216, 216, 0.3)';
     } else if (source_seq < destination_seq && throughputResults[source_seq]?.[destination_seq] !== '-' && throughputResults[source_seq]?.[destination_seq] !== undefined) {
       return 'rgba(255, 255, 0, 0.1)'; // 대각선 위의 부분에 값이 있는 경우에만 노란색 적용
     } else {

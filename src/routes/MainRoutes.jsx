@@ -9,6 +9,7 @@ const RegisterDevice = Loadable(lazy(() => import('src/pages/dashboard/Device/Re
 const AnalyticsPage = Loadable(lazy(() => import('pages/dashboard/Analytics/AnalyticsPage')));
 const SettingPage = Loadable(lazy(() => import('src/pages/extra-pages/Setting')));
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
+const ImagePage = Loadable(lazy(() => import('pages/dashboard/Image/ImagePage.jsx')));
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -46,6 +47,10 @@ const MainRoutes = {
     {
       path: 'analytics',
       element: <AnalyticsPage />
+    },
+    {
+      path: 'image',
+      element: <ImagePage />
     }
   ]
 };

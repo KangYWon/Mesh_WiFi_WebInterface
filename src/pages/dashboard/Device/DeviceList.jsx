@@ -15,6 +15,7 @@ const DeviceList = ({ devices = [], onDelete, onRestart, onReorder }) => (
           <Table ref={provided.innerRef} {...provided.droppableProps}>
             <TableHead>
               <TableRow>
+                <TableCell>Seq/Layer</TableCell>
                 <TableCell>MAC Address</TableCell>
                 <TableCell style={{ textAlign: 'center' }}>Status/Action</TableCell>
                 <TableCell></TableCell>
@@ -34,6 +35,9 @@ const DeviceList = ({ devices = [], onDelete, onRestart, onReorder }) => (
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
+                        <TableCell>
+                          {device.seq ? `${device.seq}` : ''} / {device.layer ? `${device.layer}` : ''} {/* seq/layer 정보 표시 */}
+                        </TableCell>
                         <TableCell>{device.mac}</TableCell>
                         <TableCell style={{ textAlign: 'center' }}>
                           <IconButton
@@ -46,7 +50,7 @@ const DeviceList = ({ devices = [], onDelete, onRestart, onReorder }) => (
                                   ? device.action
                                     ? 'green'
                                     : 'rgb(217, 13, 13, 0.9)'
-                                  : 'gray',
+                                  : 'rgb(216, 216, 216)',
                                 verticalAlign: 'middle',
                               }}
                             />

@@ -81,7 +81,7 @@ const Latency = () => {
     }
 
     if (source_seq === destination_seq) {
-        return ''; // 자기 자신인 경우 색상 없음
+        return 'rgba(216, 216, 216, 0.3)';
     } else if (
         source_seq < destination_seq &&
         cellValue.result !== '-' // Check if result is not '-'

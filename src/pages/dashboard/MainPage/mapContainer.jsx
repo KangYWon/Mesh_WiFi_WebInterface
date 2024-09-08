@@ -55,6 +55,13 @@ const MapContainerComponent = ({ selectedNode, onNodeClick = () => {} }) => {
     const handleWebSocketMessage = (message) => {
         if (message.type === 'fetch_gps') {
             const nodeDataFromServer = message.data;
+
+            // 첫 번째 노드의 좌표를 고정 좌표로 설정
+            if (nodeDataFromServer.length > 0) {
+              nodeDataFromServer[0].latitude = 36.10332;  // 고정된 위도
+              nodeDataFromServer[0].longitude = 129.3869; // 고정된 경도
+            }
+            
             setNodes(nodeDataFromServer);
 
             // 연결 데이터 생성

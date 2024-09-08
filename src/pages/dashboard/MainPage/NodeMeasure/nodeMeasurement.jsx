@@ -8,7 +8,14 @@ import ThroughputChartPage from 'src/pages/dashboard/MainPage/NodeMeasure/throug
 
 import { useNavigate } from 'react-router-dom';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
-import { textFieldStyles, buttonStyles, clearButtonStyles, analyticsButtonStyles, stopButtonStyles, activeStopButtonStyles } from 'src/components/styles.js';
+import {
+  textFieldStyles,
+  buttonStyles,
+  clearButtonStyles,
+  analyticsButtonStyles,
+  stopButtonStyles,
+  activeStopButtonStyles,
+} from 'src/components/styles.js';
 
 export default function NodeMeasurement({ }) {
   const [nodes, setNodes] = useState([]);
@@ -40,14 +47,14 @@ export default function NodeMeasurement({ }) {
         console.log('Fetched Node:', nodeDataFromServer); // 받은 데이터 확인
         setNodes(nodeDataFromServer);
 
-        if (!resultPage) {  // resultPage가 false인 경우에만 에러를 표시
-          setError('Network topology has changed. Measurement is temporarily disabled.');
-          setButtonDisabled(true); // 버튼 비활성화 상태 설정
-          setTimeout(() => {
-            setButtonDisabled(false); // 5초 후 버튼 다시 활성화
-            setError('');
-          }, 3000);
-        }
+        // if (!resultPage) {  // resultPage가 false인 경우에만 에러를 표시
+        //   setError('Network topology has changed. Measurement is temporarily disabled.');
+        //   setButtonDisabled(true); // 버튼 비활성화 상태 설정
+        //   setTimeout(() => {
+        //     setButtonDisabled(false); // 5초 후 버튼 다시 활성화
+        //     setError('');
+        //   }, 3000);
+        // }
       } else if (message.type === 'latency') {
         if (message.data && message.data.result != null) {
           setLatencyData(prevData => [...prevData, parseFloat(message.data.result)]);
@@ -82,10 +89,10 @@ export default function NodeMeasurement({ }) {
         // 새로운 에러 타입 처리
         setError('Topology changed during measurement.');
         setIsError(true); // 에러 상태 설정
-      } else if (message.type === 'error') {
-        setError(message.data || 'An unknown error occurred');
-        setIsError(true); // 에러 상태 설정
-      } 
+      } //else if (message.type === 'error') {
+      //   setError(message.data || 'An unknown error occurred');
+      //   setIsError(true); // 에러 상태 설정
+      // } 
     };
 
     // WebSocket 메시지 콜백 설정
@@ -240,18 +247,17 @@ export default function NodeMeasurement({ }) {
       {error && isError && (
         <Box
           sx={{
-            marginTop: 2,
+            marginTop: 1,
             padding: 1.5, // 상자 내부 패딩 줄이기
             border: '1px solid red',
             backgroundColor: '#fdd',
-            width: '100%', // 상자의 너비 조정
-            maxWidth: '400px', // 상자의 최대 너비 설정
+            maxWidth: '100%', // 상자의 최대 너비 설정
             fontSize: '0.87rem', // 글자 크기 조정
             wordWrap: 'break-word' // 긴 단어가 상자를 넘지 않도록 처리
           }}
         >
-          <h3>Error</h3>
-          <p>{error}</p>
+          <h3 style={{ marginBottom: '4px' }}>Error</h3> {/* h3의 하단 마진을 줄임 */}
+          <p style={{ marginTop: '0px' }}>{error}</p> {/* p의 상단 마진을 없앰 */}
         </Box>
       )}
 
@@ -302,7 +308,7 @@ export default function NodeMeasurement({ }) {
               }
             }}
             onClick={handleStopMeasurement}
-            disabled={isStopMeasurementClicked} // 클릭된 후 비활성화
+            disabled={isStopMeasurementClicked || isError} // 에러 상태이거나 측정이 중지된 경우 비활성화
           >
             Stop Measurement
           </Button>
