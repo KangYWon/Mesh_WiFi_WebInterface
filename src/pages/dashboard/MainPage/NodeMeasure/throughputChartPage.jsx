@@ -6,7 +6,7 @@ import { Typography } from '@mui/material';
 const ThroughputChartPage = ({ throughputData, lossData, backgroundColor, borderColor, isError = false }) => {
 
   // 소수점 네 자리까지 포맷하는 함수
-  const formatNumber = (num) => parseFloat(num).toFixed(4);
+  const formatNumber = (num) => parseFloat(num).toFixed(5);
 
   return (
     <Box sx={{ padding: '15px' }}>

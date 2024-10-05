@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableRow, IconButton, Paper, Ty
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import Footer from 'src/pages/extra-pages/footer.jsx';
 
 const DeviceListWithImageUpload = ({ devices = [], onDelete, onRestart, onReorder }) => {
   const [selectedDevice, setSelectedDevice] = useState(null);
@@ -41,6 +42,7 @@ const DeviceListWithImageUpload = ({ devices = [], onDelete, onRestart, onReorde
   };
 
   return (
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
     <Paper elevation={3} style={{ padding: '20px' }}>
       <Typography variant="h5" gutterBottom>
         등록된 노드
@@ -139,6 +141,8 @@ const DeviceListWithImageUpload = ({ devices = [], onDelete, onRestart, onReorde
         </Box>
       </Box>
     </Paper>
+    <Footer />
+    </div>
   );
 };
 

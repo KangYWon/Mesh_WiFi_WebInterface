@@ -8,10 +8,12 @@ import MapContainer from 'src/pages/dashboard/MainPage/mapContainer.jsx';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import { Outlet } from 'react-router-dom';
 import navigation from 'layout/Dashboard/Drawer/DrawerContent/Navigation';
+import Footer from 'src/pages/extra-pages/footer.jsx';
 
 const AnalyticsPage = () => {
 
   return (
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
     <Container maxWidth="lg" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px' }}>
       <Typography variant="h4" gutterBottom align="center" style={{ marginBottom: '30px' }}>
         Analytics
@@ -34,6 +36,8 @@ const AnalyticsPage = () => {
         </Grid>
       </Grid>
     </Container>
+    <Footer />
+    </div>
   );  
 };
 

@@ -3,6 +3,7 @@ import { Container, Grid, Typography } from '@mui/material';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js'; 
 import DeviceList from './DeviceList';
 import DeviceForm from './DeviceForm';
+import Footer from 'src/pages/extra-pages/footer.jsx';
 
 const RegisterDevice = () => {
   const [devices, setDevices] = useState([]);
@@ -134,30 +135,36 @@ const RegisterDevice = () => {
   };
 
   return (
-    <Container maxWidth="lg" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px' }}>
-      <Typography variant="h4" gutterBottom align="center" style={{ marginBottom: '30px' }}>
-        노드 등록
-      </Typography>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <DeviceList 
-            devices={devices} 
-            onDelete={handleDeleteDevice} 
-            onRestart={handleRestartDevice} 
-            onReorder={handleReorder} 
-          />
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Container
+        maxWidth="lg"
+        style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', flexGrow: 1 }}
+      >
+        <Typography variant="h4" gutterBottom align="center" style={{ marginBottom: '30px' }}>
+          노드 등록
+        </Typography>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
+            <DeviceList
+              devices={devices}
+              onDelete={handleDeleteDevice}
+              onRestart={handleRestartDevice}
+              onReorder={handleReorder}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <DeviceForm
+              newDeviceMac={newDeviceMac}
+              error={error}
+              onChange={(e) => setNewDeviceMac(e.target.value)}
+              onSubmit={handleAddDevice}
+              onFocus={handleFocus}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <DeviceForm 
-            newDeviceMac={newDeviceMac} 
-            error={error} 
-            onChange={(e) => setNewDeviceMac(e.target.value)} 
-            onSubmit={handleAddDevice} 
-            onFocus={handleFocus}
-          />
-        </Grid>
-      </Grid>
-    </Container>
+      </Container>
+      <Footer />
+    </div>
   );
 };
 

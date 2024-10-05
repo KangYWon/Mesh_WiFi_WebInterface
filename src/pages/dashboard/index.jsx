@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Container, Paper, Box } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Toolbar from '@mui/material/Toolbar';
+import Footer from 'src/pages/extra-pages/footer.jsx';
 
 // project import
 import Drawer from 'src/layout/Dashboard/Drawer';
@@ -32,6 +33,7 @@ export default function DashboardLayout() {
   if (menuMasterLoading) return <Loader />;
 
   return (
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
     <Container maxWidth="xl" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', minHeight: '100vh' }}>
       <Header />
       <Drawer />
@@ -72,5 +74,7 @@ export default function DashboardLayout() {
         </Box>
       </Box>
     </Container>
+    <Footer />
+    </div>
   );
 }
