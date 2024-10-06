@@ -36,20 +36,44 @@ const CustomControl = ({ toggleImage }) => {
   return null;
 };
 
-const ArrowheadPolyline = ({ positions, color }) => {
+const ArrowheadPolyline = ({ positions, initialColor }) => {
   const map = useMap();
+  const [color, setColor] = useState(initialColor); // 초기 색상 상태
 
   useEffect(() => {
-    const polyline = L.polyline(positions, { color, weight: 2 }).addTo(map);
-    const arrowheads = L.polyline(positions, { color })
-      .arrowheads({ size: '15px', frequency: 'end', yawn: 60 })
-      .addTo(map);
+    // 함수 내에서 줌 레벨에 따라 색상 및 굵기 변경
+    const updatePolyline = () => {
+      const zoom = map.getZoom();
+      const newColor = zoom > 14 ? 'black' : 'black'; // 줌 레벨에 따른 색상 설정 (일단 둘다 검정으로 해둠 )
+      const newWeight = zoom > 14 ? 0.01 : 2; // 줌 레벨에 따른 굵기 설정
 
-    return () => {
-      map.removeLayer(polyline);
-      map.removeLayer(arrowheads);
+      setColor(newColor); // 색상 상태 업데이트
+
+      // 기존 폴리라인 제거 후 새로 그리기
+      const polyline = L.polyline(positions, { color: newColor, weight: newWeight }).addTo(map);
+      const arrowheads = L.polyline(positions, { color: newColor })
+        .arrowheads({ size: '15px', frequency: 'end', yawn: 60 })
+        .addTo(map);
+
+      // 클린업 함수로 기존 레이어 제거
+      return () => {
+        map.removeLayer(polyline);
+        map.removeLayer(arrowheads);
+      };
     };
-  }, [map, positions, color]);
+
+    // 초기 폴리라인 생성
+    const cleanup = updatePolyline();
+
+    // 줌 레벨이 변경될 때마다 폴리라인 및 굵기 업데이트
+    map.on('zoomend', updatePolyline);
+
+    // 컴포넌트 언마운트 시 이벤트 제거 및 레이어 삭제
+    return () => {
+      map.off('zoomend', updatePolyline);
+      cleanup();
+    };
+  }, [map, positions]);
 
   return null;
 };
@@ -57,7 +81,7 @@ const ArrowheadPolyline = ({ positions, color }) => {
 const MarkerComponent = ({ node, openedPopupNode, setOpenedPopupNode, layerColors }) => {
   const map = useMap();
   const zoom = map.getZoom();
-  const radius = zoom > 14 ? 7 : zoom > 13 ? 10 : 15;
+  const radius = zoom > 13 ? 10 : zoom > 12 ? 13 : 15;
 
   return (
     <CircleMarker

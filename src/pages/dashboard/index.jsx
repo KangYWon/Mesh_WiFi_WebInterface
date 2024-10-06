@@ -52,8 +52,8 @@ export default function DashboardLayout() {
             >
               {/* 왼쪽 Pane */}
               <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <Box sx={{ flex: '0 1 50%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                  <MapContainer style={{ width: '100%', height: '100%' }} />
+                <Box sx={{ flex: '0 1 50%', display: 'flex', flexDirection: 'column', position: 'relative', minHeight: '400px' }}>
+                  <MapContainer style={{ width: '100%', height: '100%',  minHeight: '400px' }} />
                 </Box>
                 <Box sx={{ flex: '1 1 50%', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
                   <Paper sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%', padding: '20px', height: '100%' }}>

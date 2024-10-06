@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 
 import LatencyChartPage  from 'src/pages/dashboard/MainPage/NodeMeasure/latencyChartPage.jsx';
 import ThroughputChartPage from 'src/pages/dashboard/MainPage/NodeMeasure/throughputChartPage.jsx';
@@ -19,8 +20,8 @@ import {
 
 export default function NodeMeasurement({ }) {
   const [nodes, setNodes] = useState([]);
-  const [source, setSource] = useState('');
-  const [destination, setDestination] = useState('');
+  const [source, setSource] = useState(null); // Autocomplete 선택된 값은 객체로 유지
+  const [destination, setDestination] = useState(null); // Autocomplete 선택된 값은 객체로 유지
   const [measurementResult, setMeasurementResult] = useState(null);
   const [currentMeasurementType, setCurrentMeasurementType] = useState(null);
   const [measurementRequested, setMeasurementRequested] = useState(false);
@@ -105,19 +106,33 @@ export default function NodeMeasurement({ }) {
   }, []);
 
   const handleMeasurement = (type) => {
-    // 입력값 유효성 검사
-    if (!source.trim() || !destination.trim()) {
+    // // 입력값 유효성 검사
+    // if (!source.trim() || !destination.trim()) {
+    //   setError('Source and Destination cannot be empty');
+    //   return;
+    // } else if (source.trim() === destination.trim()) {
+    //   setError('Source and Destination should be different nodes');
+    //   return;
+    // } else if (!isNodeSeqValid(parseInt(source), nodes) || !isNodeSeqValid(parseInt(destination), nodes)) {
+    //   setError('Source and Destination should be valid node sequences');
+    //   return;
+    // } else {
+    //   setError('');
+    // } 
+    
+     // 입력값 유효성 검사
+    if (!source || !destination) {
       setError('Source and Destination cannot be empty');
       return;
-    } else if (source.trim() === destination.trim()) {
+    } else if (source.seq === destination.seq) {
       setError('Source and Destination should be different nodes');
       return;
-    } else if (!isNodeSeqValid(parseInt(source), nodes) || !isNodeSeqValid(parseInt(destination), nodes)) {
+    } else if (!isNodeSeqValid(parseInt(source.seq), nodes) || !isNodeSeqValid(parseInt(destination.seq), nodes)) {
       setError('Source and Destination should be valid node sequences');
       return;
     } else {
       setError('');
-    } 
+    }
 
     setCurrentMeasurementType(type); // 측정 유형 설정
     setMeasurementRequested(true); // 측정 요청 상태를 true로 설정
@@ -128,13 +143,18 @@ export default function NodeMeasurement({ }) {
     setMeasurementResult(null);
     setResultPage(false);
 
-    sendMessage(type.toLowerCase(), { source, destination })
+   // 서버로 seq 값 전송
+    sendMessage(type.toLowerCase(), {
+      source: source.seq.toString(),  // 선택된 노드의 seq 값 전송 (문자열로 변환)
+      destination: destination.seq.toString() // 선택된 노드의 seq 값 전송
+    })
       .catch(error => {
         console.error('Error sending WebSocket message:', error);
         setError('Failed to send measurement request. Please try again.');
         setMeasurementRequested(false); // 에러 발생 시 false로 재설정
         setIsError(true); // 에러 상태 설정
       });
+
       // 10초 후 버튼을 다시 활성화
     setTimeout(() => {
       setButtonDisabled(false);
@@ -142,20 +162,21 @@ export default function NodeMeasurement({ }) {
   };
 
   const isNodeSeqValid = (value, nodes) => {
-    return value >= 0 && value < nodes.length;
+    // seq 값이 0 이상이고, nodes 배열에 있는 값인지 확인
+    return value >= 0 && nodes.some((node) => node.seq === value);
   };
 
   const handleClearInputs = () => {
-    setSource('');
-    setDestination('');
+    setSource(null); // Source 선택 초기화
+    setDestination(null); // Destination 선택 초기화
     setError('');
   };
 
   const handleClearResults = () => {
     setMeasurementResult(null);
     setCurrentMeasurementType(null);
-    setSource('');
-    setDestination('');
+    setSource(null);
+    setDestination(null);
     setError('');
     setMeasurementRequested(false);
     setIsStopMeasurementClicked(false);
@@ -167,7 +188,11 @@ export default function NodeMeasurement({ }) {
 
   const handleStopMeasurement = async () => {
     try {
-      sendMessage('cancel_measurement', { type: 'cancel_measurement', source: source, destination: destination });
+      sendMessage('cancel_measurement', {
+        type: 'cancel_measurement',
+        source: source.seq.toString(), // seq 값만 전송
+        destination: destination.seq.toString() // seq 값만 전송
+      });
       
       console.log('Measurement stopped.');
       setMeasurementRequested(false);
@@ -184,42 +209,66 @@ export default function NodeMeasurement({ }) {
     }
   };
 
+  // Autocomplete 노드 선택 옵션 설정
+  const nodeOptions = nodes.map(node => ({
+    label: `Node ${node.seq}`,  // 보여지는 옵션
+    seq: node.seq  // 실제로 사용되는 seq 값
+  }));
+
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '16px' }}>
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '50vh', paddingLeft: '16px' }}>
       <h2>Node Measurement</h2>
 
-      {/* Source Node와 Destination Node 필드가 resultPage가 false일 때만 렌더링됨 */}
-      {!resultPage && (
-        <>
+       {/* Source Node 선택 필드 */}
+       {!resultPage && (
+       <Autocomplete
+        options={nodeOptions}
+        getOptionLabel={(option) => option.label}
+        value={source} // 선택된 값을 Autocomplete에 설정
+        onChange={(event, newValue) => {
+          setSource(newValue); // 선택된 노드 객체 설정
+          setError('');
+        }}
+        renderInput={(params) => (
           <TextField
+            {...params}
             label="Source Node"
-            value={source}
-            onChange={(e) => {
-              setSource(e.target.value);
-              setError('');
-            }}
-            fullWidth
-            margin="normal"
+            value={source ? source.seq : ''}  // seq 값만 렌더링
             error={!!error}
             helperText={error}
+            fullWidth
             disabled={!!measurementResult} // 결과가 있으면 비활성화
             sx={textFieldStyles}
-          />
-          <TextField
-            label="Destination Node"
-            value={destination}
-            onChange={(e) => {
-              setDestination(e.target.value);
-              setError('');
-            }}
-            fullWidth
             margin="normal"
+          />
+        )}
+      />
+      )}
+
+      {/* Destination Node 선택 필드 */}
+      {!resultPage && (
+      <Autocomplete
+        options={nodeOptions}
+        getOptionLabel={(option) => option.label}
+        value={destination} // 선택된 값을 Autocomplete에 설정
+        onChange={(event, newValue) => {
+          setDestination(newValue); // 선택된 노드 객체 설정
+          setError('');
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Destination Node"
+            value={destination ? destination.seq : ''}  // seq 값만 렌더링
             error={!!error}
             helperText={error}
+            fullWidth
+            margin="normal"
             disabled={!!measurementResult}
             sx={textFieldStyles}
           />
-        </>
+        )}
+      />
       )}
 
       {/* 측정 버튼들이 resultPage가 false일 때만 렌더링됨 */}
@@ -262,10 +311,10 @@ export default function NodeMeasurement({ }) {
       )}
 
       {measurementResult && (
-        <Box sx={{ marginTop: 1, padding: 2, border: '1px solid gray' }}>
+        <Box sx={{ marginTop: 1, padding: 2, border: '1px solid gray', minHeight: 'auto' }}>
         <h3 style={{ marginBottom: '8px' }}>[ Result ]</h3> 
         <p style={{ marginTop: 0, marginBottom: '10px' }}>
-          Source Node [{source}] ➔ Destination Node [{destination}]
+          Source Node [{source.seq}] ➔ Destination Node [{destination.seq}]
         </p>
           {currentMeasurementType === 'Latency' ? (
             <LatencyChartPage 

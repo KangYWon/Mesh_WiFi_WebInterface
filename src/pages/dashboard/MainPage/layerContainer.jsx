@@ -15,7 +15,7 @@ const LayerContainer = () => {
                     console.log('from fetch_node');
                     const transformedData = transformDataForD3(message.data);
                     setTreeData(transformedData);
-                    setTotalNodes(message.data.length + 1); // 총 노드 수 = seq + 1로 계산
+                    setTotalNodes(message.data.length); // 총 노드 수 = seq로 계산 지금 router자체도 포함하려고 하기 때문. 
                     setLoading(false); // 로딩 완료
                 }
             } catch (error) {
@@ -90,26 +90,17 @@ const LayerContainer = () => {
             }}>
                 {/* Tree Topology 타이틀 */}
                 <h1 style={{ margin: '0', fontSize: '30px', fontWeight: 'bold' }}>Tree Topology</h1>
-    
+
                 {/* Total Node 표시 */}
                 <div style={{ 
                     marginTop: '0px', 
                     display: 'flex', 
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                 }}>
                     <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Total node: </span>
-                    <div style={{ 
-                        width: '40px', 
-                        height: '40px', 
-                        marginLeft: '10px', 
-                        borderRadius: '8px', // 사각형을 둥글게
-                        // backgroundColor: '#e0e0e0', // 사각형 내부 회색 배경
-                        display: 'flex', 
-                        justifyContent: 'center', 
-                        alignItems: 'center' // 중앙 정렬
-                    }}>
+                    <span style={{ marginLeft: '10px',  marginTop: '2px'}}>
                         {loading ? <CircularProgress size={25} sx={{ color: 'green' }} /> : totalNodes}
-                    </div>
+                    </span>
                 </div>
             </div>
     

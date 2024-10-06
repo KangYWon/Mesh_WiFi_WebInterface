@@ -48,7 +48,7 @@ const Throughput = () => {
           throughputDataFromServer.forEach(data => {
             const { source_seq, destination_seq, result, loss } = data;
             if (source_seq < nodes.length && destination_seq < nodes.length) {
-              initialThroughputResults[source_seq][destination_seq] = { result: `${result.toFixed(2)} Mbps`, loss: `${loss.toFixed(1)}% loss` };
+              initialThroughputResults[source_seq][destination_seq] = { result: `${result.toFixed(2)} Mbps`, loss: `${loss.toFixed(5)}% loss` };
              }
           });
 
