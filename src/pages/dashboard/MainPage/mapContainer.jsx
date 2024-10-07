@@ -81,7 +81,7 @@ const ArrowheadPolyline = ({ positions, initialColor }) => {
 const MarkerComponent = ({ node, openedPopupNode, setOpenedPopupNode, layerColors }) => {
   const map = useMap();
   const zoom = map.getZoom();
-  const radius = zoom > 13 ? 10 : zoom > 12 ? 13 : 15;
+  const radius = zoom > 12 ? 8 : zoom > 11 ? 13 : 15;
 
   return (
     <CircleMarker

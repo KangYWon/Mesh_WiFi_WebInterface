@@ -41,6 +41,10 @@ export const textFieldStyles = {
     '&:hover': {
       borderColor: 'black',
       color: 'black',
+      backgroundColor: 'rgba(0, 0, 0, 0.1)', // 클릭했을 때와 동일한 색상 추가
+    },
+    '&:active': {
+      backgroundColor: 'rgba(0, 0, 0, 0.1)', // 클릭 시 색상 설정
     },
     '&::after': {
       content: '""',
@@ -61,6 +65,10 @@ export const textFieldStyles = {
     '&:hover': {
       borderColor: 'darkgreen',
       color: 'darkgreen',
+      backgroundColor: 'rgba(117, 224, 63, 0.1)', // 클릭했을 때와 동일한 색상 추가
+    },
+    '&:active': {
+      backgroundColor: 'rgba(117, 224, 63, 0.1)', // 클릭 시 색상 설정
     },
     '&::after': {
       content: '""',

@@ -35,9 +35,11 @@ export default function NodeMeasurement({ }) {
 
   const [isError, setIsError] = useState(false); // 에러 상태를 관리하는 상태
   const [isActive, setIsActive] = useState({ clear: false, stop: false }); // 버튼 활성화 상태
+  const [isStop, setIsStop] = useState(false); // isStop 상태 추가
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isSubscribed = true;
     console.log('Nodes:', nodes); // 디버깅 로그
 
     const handleWebSocketMessage = (message) => {
@@ -56,7 +58,7 @@ export default function NodeMeasurement({ }) {
         //     setError('');
         //   }, 3000);
         // }
-      } else if (message.type === 'latency') {
+      } else if (isSubscribed && message.type === 'latency') {
         if (message.data && message.data.result != null) {
           setLatencyData(prevData => [...prevData, parseFloat(message.data.result)]);
           setMeasurementResult({ type: 'Latency', value: parseFloat(message.data.result) });
@@ -66,7 +68,7 @@ export default function NodeMeasurement({ }) {
           setError('Latency data is missing or invalid');
           setIsError(true); // 에러 상태 설정
         }
-      } else if (message.type === 'throughput') {
+      } else if (isSubscribed && message.type === 'throughput') {
         const { data } = message; // 데이터 추출
         const { result, loss } = data;
     
@@ -101,24 +103,12 @@ export default function NodeMeasurement({ }) {
     sendMessage('fetch_node', { type: 'fetch_node' });
 
     return () => {
+      isSubscribed = false; // 구독 상태 해제
       setOnMessageCallback(null);
     };
-  }, []);
+  }, [measurementRequested]);
 
   const handleMeasurement = (type) => {
-    // // 입력값 유효성 검사
-    // if (!source.trim() || !destination.trim()) {
-    //   setError('Source and Destination cannot be empty');
-    //   return;
-    // } else if (source.trim() === destination.trim()) {
-    //   setError('Source and Destination should be different nodes');
-    //   return;
-    // } else if (!isNodeSeqValid(parseInt(source), nodes) || !isNodeSeqValid(parseInt(destination), nodes)) {
-    //   setError('Source and Destination should be valid node sequences');
-    //   return;
-    // } else {
-    //   setError('');
-    // } 
     
      // 입력값 유효성 검사
     if (!source || !destination) {
@@ -132,17 +122,15 @@ export default function NodeMeasurement({ }) {
       return;
     } else {
       setError('');
-    }
-
+    } 
     setCurrentMeasurementType(type); // 측정 유형 설정
     setMeasurementRequested(true); // 측정 요청 상태를 true로 설정
     setButtonDisabled(true); // 버튼 비활성화 상태 설정
-    // 측정 요청 전에 데이터 초기화
     setLatencyData([]);
     setThroughputData({ result: [], loss: [] });
     setMeasurementResult(null);
     setResultPage(false);
-
+    
    // 서버로 seq 값 전송
     sendMessage(type.toLowerCase(), {
       source: source.seq.toString(),  // 선택된 노드의 seq 값 전송 (문자열로 변환)
@@ -173,6 +161,7 @@ export default function NodeMeasurement({ }) {
   };
 
   const handleClearResults = () => {
+    setIsStop(false); // Clear Results 클릭 시 isStop을 false로 초기화
     setMeasurementResult(null);
     setCurrentMeasurementType(null);
     setSource(null);
@@ -188,26 +177,34 @@ export default function NodeMeasurement({ }) {
 
   const handleStopMeasurement = async () => {
     try {
-      sendMessage('cancel_measurement', {
-        type: 'cancel_measurement',
-        source: source.seq.toString(), // seq 값만 전송
-        destination: destination.seq.toString() // seq 값만 전송
-      });
-      
-      console.log('Measurement stopped.');
-      setMeasurementRequested(false);
-      setIsError(false);
-
-      if (!isStopMeasurementClicked) {
-        // Stop Measurement 로직 추가
-        setIsStopMeasurementClicked(true);
-      }
-
+      sendMessage('cancel_measurement', { type: 'cancel_measurement' });
+      setIsStopMeasurementClicked(true);
+      setIsStop(true);
     } catch (error) {
       console.error('Error stopping measurement:', error);
-      setIsError(true); 
     }
   };
+  //   try {
+  //     sendMessage('cancel_measurement', {
+  //       type: 'cancel_measurement',
+  //       source: source.seq.toString(), // seq 값만 전송
+  //       destination: destination.seq.toString() // seq 값만 전송
+  //     });
+      
+  //     console.log('Measurement stopped.');
+  //     setMeasurementRequested(false);
+  //     setIsError(false);
+
+  //     if (!isStopMeasurementClicked) {
+  //       // Stop Measurement 로직 추가
+  //       setIsStopMeasurementClicked(true);
+  //     }
+
+  //   } catch (error) {
+  //     console.error('Error stopping measurement:', error);
+  //     setIsError(true); 
+  //   }
+  // };
 
   // Autocomplete 노드 선택 옵션 설정
   const nodeOptions = nodes.map(node => ({
@@ -357,7 +354,7 @@ export default function NodeMeasurement({ }) {
               }
             }}
             onClick={handleStopMeasurement}
-            disabled={isStopMeasurementClicked || isError} // 에러 상태이거나 측정이 중지된 경우 비활성화
+            disabled={isStopMeasurementClicked || isStop}
           >
             Stop Measurement
           </Button>

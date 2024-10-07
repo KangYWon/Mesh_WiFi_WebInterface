@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import LatencyChart from 'src/components/LatencyChart.jsx'; 
 import { Typography } from '@mui/material';
 
-const LatencyChartPage = ({ latencyData, backgroundColor, borderColor, isError = false }) => {
+const LatencyChartPage = ({ latencyData, backgroundColor, borderColor, isError = false, isStop=false }) => {
 
   // 배열의 평균 계산 함수
   const calculateAverage = (data) => {
@@ -20,9 +20,15 @@ const LatencyChartPage = ({ latencyData, backgroundColor, borderColor, isError =
         Latency Test Page
       </Typography>
 
-      {isError && (
+      {/* {isError && (
         <Typography variant="body1" color="error" sx={{ marginBottom: 0 }}>
           ※ Topology에 변경이 생겼습니다. ※
+        </Typography>
+      )} */}
+
+      {isStop && (
+        <Typography variant="body1" color="error" sx={{ marginBottom: 0 }}>
+         ※ 토폴로지 측정을 멈췄습니다. ※
         </Typography>
       )}
 
