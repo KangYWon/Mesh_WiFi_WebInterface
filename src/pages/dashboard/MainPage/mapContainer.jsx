@@ -124,6 +124,18 @@ const MapContainerComponent = () => {
         if (nodeDataFromServer.length > 0) {
           nodeDataFromServer[0].latitude = 36.10332;
           nodeDataFromServer[0].longitude = 129.3869;
+
+          // nodeDataFromServer[1].latitude = 36.10376; 
+          // nodeDataFromServer[1].longitude = 129.3877;
+
+          // nodeDataFromServer[2].latitude = 36.10353; 
+          // nodeDataFromServer[2].longitude = 129.3879;
+
+          // nodeDataFromServer[3].latitude = 36.10370; 
+          // nodeDataFromServer[3].longitude = 129.3869;
+
+          // // nodeDataFromServer[4].latitude = 36.10375; 
+          // // nodeDataFromServer[4].longitude = 129.3882;
         }
         
         setNodes(nodeDataFromServer);

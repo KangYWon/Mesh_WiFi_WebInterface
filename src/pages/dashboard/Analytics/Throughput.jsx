@@ -48,9 +48,16 @@ const Throughput = () => {
           throughputDataFromServer.forEach(data => {
             const { source_seq, destination_seq, result, loss } = data;
             if (source_seq < nodes.length && destination_seq < nodes.length) {
-              initialThroughputResults[source_seq][destination_seq] = { result: `${result.toFixed(2)} Mbps`, loss: `${loss.toFixed(5)}% loss` };
+              // loss 값을 퍼센트로 변환하여 나타내기
+              const lossPercentage = (loss * 100).toFixed(2); // loss 값을 100으로 곱해 퍼센트로 변환하고 소수점 2자리로 표시
+              
+              initialThroughputResults[source_seq][destination_seq] = {
+                result: `${result.toFixed(2)} Mbps`,
+                loss: `${lossPercentage} %` // 변환된 loss 값을 퍼센트로 표시
+              };
              }
           });
+
 
           // Setting throughput results in state
           setThroughputResults(initialThroughputResults);

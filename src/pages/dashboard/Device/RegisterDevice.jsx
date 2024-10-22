@@ -141,9 +141,9 @@ const RegisterDevice = () => {
         style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', flexGrow: 1 }}
       >
         <Typography variant="h4" gutterBottom align="center" style={{ marginBottom: '30px' }}>
-          노드 등록
+          장치 목록
         </Typography>
-        <Grid container spacing={4}>
+        {/* <Grid container spacing={4}> */}
           <Grid item xs={12} md={6}>
             <DeviceList
               devices={devices}
@@ -152,7 +152,7 @@ const RegisterDevice = () => {
               onReorder={handleReorder}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          {/* <Grid item xs={12} md={6}>
             <DeviceForm
               newDeviceMac={newDeviceMac}
               error={error}
@@ -160,8 +160,8 @@ const RegisterDevice = () => {
               onSubmit={handleAddDevice}
               onFocus={handleFocus}
             />
-          </Grid>
-        </Grid>
+          </Grid> */}
+        {/* </Grid> */}
       </Container>
       <Footer />
     </div>

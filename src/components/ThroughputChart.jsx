@@ -44,7 +44,7 @@ const ThroughputChart = ({ data = [], loss = [], backgroundColor = 'rgba(75,192,
             // 줄 바꿈을 배열로 처리
             return [
               `${label}: ${context.parsed.y} Mbps`,
-              `(Loss: ${lossValue}%)`
+              `(Loss: ${lossValue})`
             ];
           }
         }
