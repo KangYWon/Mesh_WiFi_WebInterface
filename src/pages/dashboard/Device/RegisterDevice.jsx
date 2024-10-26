@@ -136,14 +136,11 @@ const RegisterDevice = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Container
-        maxWidth="lg"
-        style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', flexGrow: 1 }}
-      >
-        <Typography variant="h4" gutterBottom align="center" style={{ marginBottom: '30px' }}>
-          장치 목록
+      <Container maxWidth="lg" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px'}}>
+        <Typography variant="h4" gutterBottom align="center" style={{ marginBottom: '10px' }}>
+          Nodes List
         </Typography>
-        {/* <Grid container spacing={4}> */}
+        <Grid container spacing={4} direction="column">
           <Grid item xs={12} md={6}>
             <DeviceList
               devices={devices}
@@ -161,7 +158,7 @@ const RegisterDevice = () => {
               onFocus={handleFocus}
             />
           </Grid> */}
-        {/* </Grid> */}
+        </Grid>
       </Container>
       <Footer />
     </div>

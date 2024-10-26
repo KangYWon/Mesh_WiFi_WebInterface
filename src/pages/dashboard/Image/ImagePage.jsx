@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableRow, IconButton, Paper, Typography, Container, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CircleIcon from '@mui/icons-material/Circle';
@@ -7,6 +7,8 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Footer from 'src/pages/extra-pages/footer.jsx';
 import MapContainer from 'src/pages/dashboard/MainPage/mapContainer.jsx';
 import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
+import "src/pages/dashboard/Image/spin.css";
+import InsertPhotoIcon from '@mui/icons-material/InsertPhoto'; // 아이콘 임포트 추가
 
 // Layer 색상 정의
 const layerColors = {
@@ -50,6 +52,9 @@ const DeviceListWithOverlayPhoto = () => {
   const [photo, setPhoto] = useState(null);
   const [photoUrl, setPhotoUrl] = useState(null); // 새로운 상태 추가
   const [showOverlay, setShowOverlay] = useState(false);
+  const [error, setError] = useState(null); // 에러 상태 추가
+
+  const errorTimerRef = useRef(null); // 에러 타이머를 저장하는 ref
 
   useEffect(() => {
     // WebSocket 메시지 핸들러 설정
@@ -63,22 +68,30 @@ const DeviceListWithOverlayPhoto = () => {
           setDevices(fetchedDevices);
         } else if (message.type === 'photo_response') {
           if (message.data) {
-            // 기존 Blob URL 해제
-            if (photoUrl) {
-              URL.revokeObjectURL(photoUrl);
+            // 기존 타이머를 취소하여 에러 메시지가 표시되지 않게 함
+            if (errorTimerRef.current) {
+              clearTimeout(errorTimerRef.current);
+              errorTimerRef.current = null;
             }
             // Base64 문자열을 바이너리 데이터로 디코딩
-            const base64Data = message.data;
-            const binaryString = atob(base64Data);
-            const len = binaryString.length;
-            const byteArray = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-              byteArray[i] = binaryString.charCodeAt(i);
+            const byteCharacters = atob(message.data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
             }
+            const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], { type: 'image/jpeg' });
-            const photoUrl = URL.createObjectURL(blob);
-            setPhotoUrl(newPhotoUrl);
-            setPhoto(photoUrl);
+            const newPhotoUrl = URL.createObjectURL(blob);
+  
+            // 기존 Blob URL 해제 후 상태 업데이트
+            setPhotoUrl((prevUrl) => {
+              if (prevUrl) {
+                URL.revokeObjectURL(prevUrl);
+              }
+              return newPhotoUrl;
+            });
+            setPhoto(newPhotoUrl);
+            setError(null); // 에러 초기화
           } else {
             console.error('Photo response data is missing');
           }
@@ -89,31 +102,46 @@ const DeviceListWithOverlayPhoto = () => {
         setIsFetching(false);
       }
     };
-
+  
     setOnMessageCallback(handleWebSocketMessage);
     sendMessage('fetch_node', { type: 'fetch_node' });
-
+  
     return () => {
       setOnMessageCallback(null);
       if (photoUrl) {
         URL.revokeObjectURL(photoUrl); // 컴포넌트 언마운트 시 Blob URL 해제
       }
     };
-  }, [photoUrl]);
+  }, []);
 
   const handlePhotoRequest = (device) => {
     if (device && device.photoAvailable) {
       setIsFetching(true);
       setShowOverlay(true);
       setPhoto(null); // 초기화
+      setError(null); // 에러 초기화
 
       sendMessage('take_pic', { type: 'take_pic', destination: device.seq });
+
+      // 15초 타이머 설정
+      errorTimerRef.current = setTimeout(() => {
+        if (!photo) { // 사진이 도착하지 않은 경우에만 에러 표시
+          setIsFetching(false);
+          setError("사진을 받아오지 못했어요");
+        }
+      }, 15000); // 15초
     }
   };
 
   const handleCloseOverlay = () => {
     setShowOverlay(false);
     setPhoto(null);
+    setError(null); // 에러 초기화
+
+    if (errorTimerRef.current) {
+      clearTimeout(errorTimerRef.current); // 타이머 취소
+      errorTimerRef.current = null;
+    }
   };
 
   const handleReorder = (result) => {
@@ -148,8 +176,9 @@ const DeviceListWithOverlayPhoto = () => {
               backgroundColor: '#fff',
               padding: '20px',
               borderRadius: '8px',
-              maxWidth: '80%',
-              maxHeight: '80%',
+              width: isFetching ? '100px' : '410px', // 로딩 중일 때와 사진이 나올 때 크기 설정
+              height: isFetching ? '100px' : '280px',
+              overflow: 'auto',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -161,10 +190,24 @@ const DeviceListWithOverlayPhoto = () => {
             >
               <CloseIcon />
             </IconButton>
-            {isFetching ? (
-              <Typography variant="h6">Fetching Photo...</Typography>
+            {error ? (
+              <>
+              <Typography variant="h6" color="error">{error}</Typography>
+              <InsertPhotoIcon style={{ fontSize: '80px', color: 'gray', marginTop: '30px' }} /> {/* 이미지 없음 아이콘 */}
+              </>
+            ) : isFetching ? (
+              <div className="spin">⏳</div> // 로딩 중일 때
             ) : (
-              photo && <img src={photo} alt="Device Photo" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+              photo && (
+                <img
+                  src={photo}
+                  alt="Device Photo"
+                  style={{
+                    width: 'auto',
+                    height: 'auto',
+                  }}
+                />
+              )
             )}
           </div>
         </div>
@@ -172,7 +215,7 @@ const DeviceListWithOverlayPhoto = () => {
 
       <Container maxWidth="lg" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', flexGrow: 1 }}>
         <Typography variant="h4" gutterBottom align="center" style={{ marginBottom: '30px' }}>
-          촬영 노드 목록
+          List of Shooting Nodes
         </Typography>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'row', height: '50vh', marginBottom: '20px' }}>
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', marginRight: '16px' }}>

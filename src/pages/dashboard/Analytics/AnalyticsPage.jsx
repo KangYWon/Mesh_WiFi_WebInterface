@@ -23,25 +23,7 @@ const AnalyticsPage = () => {
         <Grid item xs={12}>
           <Breadcrumbs navigation={navigation} title/>
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'row', height: '50vh' }}>
-            {/* 왼쪽 절반에 MapContainer 배치 */}
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', marginRight: '16px' }}>
-              <MapContainer style={{ width: '100%', height: '100%' }} />
-            </Box>
-            {/* 오른쪽 절반에 OnlyMeasurement 배치 */}
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <Paper 
-                sx={{ 
-                  flexGrow: 1, 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  width: '100%', 
-                  height: '100%', // 높이를 부모 Box와 동일하게 설정
-                  padding: '20px' 
-                }}
-              >
-                <OnlyMeasurement style={{ width: '100%', height: '100%' }} />
-              </Paper>
-            </Box>
+            <MapContainer style={{ width: '100%', height: '100%' }} />
           </Box>
           <Outlet />
         </Grid>
