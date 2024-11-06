@@ -53,6 +53,7 @@ const DeviceListWithOverlayPhoto = () => {
   const [photoUrl, setPhotoUrl] = useState(null); // 새로운 상태 추가
   const [showOverlay, setShowOverlay] = useState(false);
   const [error, setError] = useState(null); // 에러 상태 추가
+  const [canRequestPhoto, setCanRequestPhoto] = useState(true); // 요청 가능 여부 상태
 
   const errorTimerRef = useRef(null); // 에러 타이머를 저장하는 ref
 
@@ -114,22 +115,26 @@ const DeviceListWithOverlayPhoto = () => {
     };
   }, []);
 
-  const handlePhotoRequest = (device) => {
-    if (device && device.photoAvailable) {
+   const handlePhotoRequest = (device) => {
+    if (device && device.photoAvailable && canRequestPhoto) {
       setIsFetching(true);
       setShowOverlay(true);
-      setPhoto(null); // 초기화
-      setError(null); // 에러 초기화
+      setPhoto(null);
+      setError(null);
 
       sendMessage('take_pic', { type: 'take_pic', destination: device.seq });
 
-      // 15초 타이머 설정
+      setCanRequestPhoto(false); // 요청 잠금 설정
+      setTimeout(() => {
+        setCanRequestPhoto(true); // 10초 후 요청 가능하게 설정
+      }, 10000);
+
       errorTimerRef.current = setTimeout(() => {
-        if (!photo) { // 사진이 도착하지 않은 경우에만 에러 표시
+        if (!photo) {
           setIsFetching(false);
           setError("사진을 받아오지 못했어요");
         }
-      }, 15000); // 15초
+      }, 15000);
     }
   };
 
@@ -253,12 +258,13 @@ const DeviceListWithOverlayPhoto = () => {
                             </TableCell>
                             <TableCell>{device.my_mac || 'Unknown'}</TableCell>
                             <TableCell style={{ textAlign: 'center' }}>
-                              <IconButton
+                               <IconButton
                                 onClick={() => handlePhotoRequest(device)}
+                                disabled={!canRequestPhoto} // 요청 제한
                               >
                                 <CameraAltIcon
                                   style={{
-                                    color: 'black',
+                                    color: canRequestPhoto ? 'black' : 'gray', // 요청 불가능 시 회색
                                   }}
                                 />
                               </IconButton>

@@ -115,7 +115,6 @@ const MapContainerComponent = () => {
     1: 'red', 2: 'orange', 3: '#ffff5e', 4: 'green', 5: 'sky',
     6: 'blue', 7: 'purple', 8: 'pink', 9: 'brown', 10: 'gray', 11: 'white'
   };
-
   useEffect(() => {
     const handleWebSocketMessage = (message) => {
       if (message.type === 'fetch_gps') {
@@ -125,17 +124,27 @@ const MapContainerComponent = () => {
           nodeDataFromServer[0].latitude = 36.10332;
           nodeDataFromServer[0].longitude = 129.3869;
 
-          nodeDataFromServer[1].latitude = 36.10376; 
-          nodeDataFromServer[1].longitude = 129.3877;
+          nodeDataFromServer[1].latitude = 36.10373; 
+          nodeDataFromServer[1].longitude = 129.3869;
 
-          nodeDataFromServer[2].latitude = 36.10353; 
-          nodeDataFromServer[2].longitude = 129.3879;
+          nodeDataFromServer[2].latitude = 36.10358; 
+          nodeDataFromServer[2].longitude = 129.3866;
 
-          // nodeDataFromServer[3].latitude = 36.10370; 
-          // nodeDataFromServer[3].longitude = 129.3869;
+          nodeDataFromServer[3].latitude = 36.10369; 
+          nodeDataFromServer[3].longitude = 129.3871;
 
-          // // nodeDataFromServer[4].latitude = 36.10375; 
-          // // nodeDataFromServer[4].longitude = 129.3882;
+          nodeDataFromServer[4].latitude = 36.10355; 
+          nodeDataFromServer[4].longitude = 129.3875;
+          
+          nodeDataFromServer[5].latitude = 36.10329; 
+          nodeDataFromServer[5].longitude = 129.3877;
+
+          nodeDataFromServer[6].latitude = 36.10324; 
+          nodeDataFromServer[6].longitude = 129.3884;
+
+          nodeDataFromServer[7].latitude = 36.10289; 
+          nodeDataFromServer[7].longitude = 129.3881;
+
         }
         
         setNodes(nodeDataFromServer);
