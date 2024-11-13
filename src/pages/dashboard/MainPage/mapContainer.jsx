@@ -120,32 +120,32 @@ const MapContainerComponent = () => {
       if (message.type === 'fetch_gps') {
         const nodeDataFromServer = message.data;
 
-        if (nodeDataFromServer.length > 0) {
-          nodeDataFromServer[0].latitude = 36.10332;
-          nodeDataFromServer[0].longitude = 129.3869;
+        // if (nodeDataFromServer.length > 0) {
+        //   nodeDataFromServer[0].latitude = 36.10347;
+        //   nodeDataFromServer[0].longitude = 129.3864;
 
-          nodeDataFromServer[1].latitude = 36.10373; 
-          nodeDataFromServer[1].longitude = 129.3869;
+        //   nodeDataFromServer[1].latitude = 36.10344; 
+        //   nodeDataFromServer[1].longitude = 129.3866;
 
-          nodeDataFromServer[2].latitude = 36.10358; 
-          nodeDataFromServer[2].longitude = 129.3866;
+        //   nodeDataFromServer[2].latitude = 36.1033633;
+        //   nodeDataFromServer[2].longitude = 129.3862569;
 
-          nodeDataFromServer[3].latitude = 36.10369; 
-          nodeDataFromServer[3].longitude = 129.3871;
+        //   nodeDataFromServer[3].latitude = 36.10333;
+        //   nodeDataFromServer[3].longitude = 129.3869;
 
-          nodeDataFromServer[4].latitude = 36.10355; 
-          nodeDataFromServer[4].longitude = 129.3875;
+        //   nodeDataFromServer[4].latitude = 36.10358;
+        //   nodeDataFromServer[4].longitude = 129.3862;
           
-          nodeDataFromServer[5].latitude = 36.10329; 
-          nodeDataFromServer[5].longitude = 129.3877;
+        //   nodeDataFromServer[5].latitude = 36.10336; 
+        //   nodeDataFromServer[5].longitude = 129.3863;
 
-          nodeDataFromServer[6].latitude = 36.10324; 
-          nodeDataFromServer[6].longitude = 129.3884;
+        // //   nodeDataFromServer[6].latitude = 36.10324; 
+        // //   nodeDataFromServer[6].longitude = 129.3884;
 
-          nodeDataFromServer[7].latitude = 36.10289; 
-          nodeDataFromServer[7].longitude = 129.3881;
+        // //   nodeDataFromServer[7].latitude = 36.10289; 
+        // //   nodeDataFromServer[7].longitude = 129.3881;
 
-        }
+        // }
         
         setNodes(nodeDataFromServer);
         setConnections(nodeDataFromServer
@@ -181,7 +181,7 @@ const MapContainerComponent = () => {
             layerColors={layerColors}
           />
         ))}
-        {connections.map((conn) => {
+        {/* {connections.map((conn) => {
           const fromNode = nodes.find(node => node.my_mac === conn.from);
           const toNode = nodes.find(node => node.my_mac === conn.to);
           if (!fromNode || !toNode) return null;
@@ -198,7 +198,7 @@ const MapContainerComponent = () => {
               color="black"
             />
           );
-        })}
+        })} */}
         {showImage && (
           <img 
             src={picture}

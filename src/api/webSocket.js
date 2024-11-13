@@ -5,7 +5,8 @@ const pendingPromises = {}; // 응답을 대기 중인 Promise들을 저장하�
 const onMessageCallbacks = []; // 외부에서 설정된 메시지 콜백 함수들을 저장하는 배열
 
 const connectWebSocket = () => {
-  ws = new WebSocket('ws://172.18.128.173:3000/web_interface_handler');
+  ws = new WebSocket('ws://192.168.50.213:3000/web_interface_handler');
+  // ws = new WebSocket('ws://172.18.128.173:3000/web_interface_handler');
 
   ws.onopen = () => {
     console.log('WebSocket connection established');

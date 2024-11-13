@@ -41,7 +41,13 @@ const renderLayerCircle = (layer) => {
 };
 
 
-const DeviceList = ({ devices = [], onDelete, onRestart, onReorder }) => (
+const DeviceList = ({ devices = [], onDelete, onRestart, onReorder }) => {
+  // 필터링: 필요한 정보가 없는 노드 제외
+  const filteredDevices = devices.filter(device => 
+    device && device.mac && device.seq !== undefined && device.layer !== undefined
+  );
+
+  return (
   <Box style={{ padding: '20px' }}>
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'row', height: '50vh', marginBottom: '20px' }}>
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', marginRight: '16px' }}>
@@ -119,6 +125,7 @@ const DeviceList = ({ devices = [], onDelete, onRestart, onReorder }) => (
       </DragDropContext>
     </Paper>
   </Box>
-);
+  );
+};
 
 export default DeviceList;
