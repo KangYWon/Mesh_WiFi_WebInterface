@@ -57,18 +57,7 @@ const Throughput = () => {
               };
             }
           });
-
-          if (source_seq < nodes.length && destination_seq < nodes.length) {
-            // loss 값을 소수점 5자리로 변환하여 나타내기
-            const lossDecimal = loss.toFixed(5); // 소수점 5자리로 변환
-
-            initialThroughputResults[source_seq][destination_seq] = {
-              result: `${result.toFixed(2)} Mbps`,
-              loss: `${lossDecimal}` // 변환된 loss 값을 소수점 5자리로 표시
-            };
-          }
-
-
+          
           // Setting throughput results in state
           setThroughputResults(initialThroughputResults);
         } else {
