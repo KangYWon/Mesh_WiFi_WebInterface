@@ -1,62 +1,98 @@
-## Web Interface 기반 MESH WIFI 네트워크 관리 도구 개발
+# **Web Interface-Based Mesh WiFi Network Management Tool**
 
-Mesh WiFi topology 연결을 Web Interface로 볼 수 있도록 디자인한 웹페이지(프론트엔드)
+A web-based application to monitor and manage Mesh WiFi networks with real-time topology visualization and performance insights.
 
-최근 IoT의 발전으로 인해 다양한 디바이스 간의 효율적인 데이터 통신이 중요해짐
-다수의 디바이스를 활용하여 MESH Network를 구축하고 운영하기 위해서는 동적인 네트워크 토폴로지 및 네트워크 성능을 실시간으로 모니터링 할 수 있는 Web Interface 기반의 네트워크 관리 도구가 필요함. 
-아래의 웹 페이지로 성능(Latency, Throughput, Loss) 측정, 디바이스 on/off 현황과 Restart, 이미지 정보 페이지로 구성되어 있음. 노드가 형성한 네트워크 토폴로지를 확인할 수 있음.
+## **Features**
+- **Network Performance Monitoring**
+  - Measure key metrics: **Latency**, **Throughput**, and **Packet Loss**.
+- **Device Management**
+  - Display device on/off status.
+  - Restart devices directly through the interface.
+- **Topology Visualization**
+  - Real-time display of the network topology formed by the nodes.
+- **Image Information Page**
+  - View and manage node-specific image data.
 
-### 목차
+---
 
-[설치 방법](#설치-방법)
-[사용법](#사용법)
+## **Table of Contents**
+1. [Getting Started](#getting-started)
+2. [Documentation](#documentation)
+3. [Technology Stack](#technology-stack)
+4. [Initial React Templates](#initial-react-templates)
+5. [Troubleshooting](#troubleshooting)
 
-### 설치 방법 (Installation) ## Getting Started
+---
 
-1. Clone from Github
-1. 이 저장소를 클론합니다:
-   git clone
-   
-2. Install packages
-2. 필요한 종속성을 설치한다:
-   node -v, npm -v확인
-   Yarn 설치 : npm install -g yarn
+## **Getting Started**
 
-4. Run project
-    yarn start / (HOST=0.0.0.0 PORT=3000 yarn start) 
-   
-### 기술 스택 
-- React
-- Node.js (npm)
+### **Installation Steps**
+1. **Clone the Repository**  
+   Clone the project from GitHub:  
+   ```bash
+   git clone https://github.com/KangYWon/Mesh_WiFi_WebInterface.git
+   ```
 
-### 문제 해결
-- 의존성 설치가 안 된 경우 : yarn install
-- Cannot find module @rollup/rollup-darwin-x64: rm -rf node_modules, rm package-lock.json (기존의 node_modules와 package-lock.json삭제) –> yarn install
+2. **Install Dependencies**  
+   Verify Node.js and npm versions:  
+   ```bash
+   node -v
+   npm -v
+   ```
+   Install Yarn globally:
+    ```bash
+   npm install -g yarn
+   ```
+3. **Run the Project
+   Start the development server:
+   ```bash
+   yarn start
+   ```
+   Alternatively, run with custom host and port:
+    ```bash
+   HOST=0.0.0.0 PORT=3000 yarn start
+   ```
+    
+---
 
-## Table of contents
+## **Documentation**
+   **Find detailed documentation and guidance for this project here:
+   Mantis Documentation[https://codedthemes.gitbook.io/mantis]
 
-- [Getting started](#getting-started)
-- [Documentation](#documentation)
-- [Technology stack](#technology-stack)
-- [More Free React Templates](#more-free-react-material-admin-dashboard-templates)
+---
 
-## Documentation
+## **Technology stack
+   **This project utilizes the following technologies:
+   •	Frontend:
+	   •	React
+	   •	Material UI V5 for UI components
+	   •	React Router for navigation
+	•	State Management: Redux Toolkit
+	•	Build Tools: Vite, Yarn
+	•	Styling: CSS-in-JS, Material Design
 
-[Mantis documentation](https://codedthemes.gitbook.io/mantis/) helps you out in all aspects from Installation to deployment.
+---
+ 
+##Initial React Templates
+    **Explore these free templates to enhance the admin dashboard design:
+	 Materially Free ReactJS Admin Template[https://codedthemes.com/item/materially-free-reactjs-admin-template/]
 
-## Technology stack
+---
 
-- [Material UI V5](https://mui.com/core/)
-- Built with React Hooks API.
-- React context API for state management.
-- Redux toolkit.
-- React Router for navigation routing.
-- Support for Vite.
-- Code splitting.
-- CSS-in-JS.
+##Troubleshooting
 
-## More Free React Material Admin Dashboard Templates
+**Dependency Installation Issues:
+   If dependencies fail to install, run:
+   ```bash
+   yarn install
+   ```
+**Module Not Found: @rollup/rollup-darwin-x64
+   Clean the project and reinstall dependencies:
+   ```bash
+   rm -rf node_modules
+   rm package-lock.json
+   yarn install
+   ```
 
-- [Free Materially](https://codedthemes.com/item/materially-free-reactjs-admin-template/)
-- [Free Berry](https://mui.com/store/items/berry-react-material-admin-free/)
-
+  
+  
