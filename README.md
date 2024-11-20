@@ -19,29 +19,26 @@ Mesh WiFi topology 연결을 Web Interface로 볼 수 있도록 디자인한 웹
    
 2. Install packages
 2. 필요한 종속성을 설치한다:
-   yarn install
+   node -v, npm -v확인
+   Yarn 설치 : npm install -g yarn
 
-3. Run project
-   yarn start
+4. Run project
+    yarn start / (HOST=0.0.0.0 PORT=3000 yarn start) 
    
 ### 기술 스택 
 - React
-- Node.js
+- Node.js (npm)
 
 ### 문제 해결
+- 의존성 설치가 안 된 경우 : yarn install
+- Cannot find module @rollup/rollup-darwin-x64: rm -rf node_modules, rm package-lock.json (기존의 node_modules와 package-lock.json삭제) –> yarn install
 
 ## Table of contents
 
 - [Getting started](#getting-started)
 - [Documentation](#documentation)
 - [Technology stack](#technology-stack)
-- [Author](#author)
-- [Issues?](#issues)
-- [License](#license)
 - [More Free React Templates](#more-free-react-material-admin-dashboard-templates)
-- [More Pro React Templates](#more-premium-react-material-admin-dashboard-templates)
-- [Follow us](#follow-us)
-
 
 ## Documentation
 
