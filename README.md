@@ -1,64 +1,34 @@
-## Web Interface front-end
+## Web Interface 기반 MESH WIFI 네트워크 관리 도구 개발
 
 Mesh WiFi topology 연결을 Web Interface로 볼 수 있도록 디자인한 웹페이지(프론트엔드)
-아래는 react 예제의 readme.md 수정할 예정.
 
-### Name Derived From Nature
+최근 IoT의 발전으로 인해 다양한 디바이스 간의 효율적인 데이터 통신이 중요해짐
+다수의 디바이스를 활용하여 MESH Network를 구축하고 운영하기 위해서는 동적인 네트워크 토폴로지 및 네트워크 성능을 실시간으로 모니터링 할 수 있는 Web Interface 기반의 네트워크 관리 도구가 필요함. 
+아래의 웹 페이지로 성능(Latency, Throughput, Loss) 측정, 디바이스 on/off 현황과 Restart, 이미지 정보 페이지로 구성되어 있음. 노드가 형성한 네트워크 토폴로지를 확인할 수 있음.
 
-Mantis Logo is inspired from the insect name - 'Mantises' as they have triangular heads with flexible Necks. Also, the name is derived from two popular UI frameworks, Material UI and Ant Design (M-Ant-is).
+### 목차
 
-Mantis has Ant Design principal on top of the MAterial UI React component library.
+[설치 방법](#설치-방법)
+[사용법](#사용법)
 
-:star: :star: :star: Support us by giving star (Top right of this page) if you like the theme :star: :star: :star:
+### 설치 방법 (Installation) ## Getting Started
 
-![mantis-free-react-dashboard-template.jpg](https://mantisdashboard.io/adv-banner-images/og-social-v1.1.0.png)
+1. Clone from Github
+1. 이 저장소를 클론합니다:
+   git clone
+   
+2. Install packages
+2. 필요한 종속성을 설치한다:
+   yarn install
 
-The [Pro version](https://mantisdashboard.io) of Mantis react template includes features such as TypeScript, apps, authentication methods (i.e. JWT, Auth0, Firebase), advance components, form plugins, layouts, widgets, and more.
+3. Run project
+   yarn start
+   
+### 기술 스택 
+- React
+- Node.js
 
-| [Mantis Free](https://mantisdashboard.io/free) | [Mantis Pro](https://mantisdashboard.io)                                         |
-| ---------------------------------------------- | :------------------------------------------------------------------------------- |
-| **7** Demo pages                               | **85+** Demo pages                                                               |
-| -                                              | ✓ Multi-language                                                                 |
-| -                                              | ✓ Dark/Light Mode 🌓                                                             |
-| -                                              | ✓ TypeScript version                                                             |
-| -                                              | ✓ Design files (Figma)                                                           |
-| -                                              | ✓ Multiple color options                                                         |
-| -                                              | ✓ RTL                                                                            |
-| -                                              | ✓ JWT, Firebase, Auth0, AWS authentication                                       |
-| -                                              | ✓ [More components](https://mantisdashboard.io/components-overview/autocomplete) |
-| ✓ MIT License                                  | ✓ [Pro License](https://mui.com/store/license/)                                  |
-
-## Why Mantis?
-
-Mantis offers everything needed to build an advanced dashboard application. In the initial release, we included following high-end features,
-
-- Support React18.
-- Professional user interface.
-- Material UI React components.
-- Fully responsive, all modern browser supported.
-- Easy to use code structure
-- Flexible & high-Performance code
-- Simple documentation
-
-## Free Mantis React version
-
-#### Preview
-
-- [Demo](https://mantisdashboard.io/free)
-
-#### Download
-
-- [Download from GitHub](https://github.com/codedthemes/mantis-free-react-admin-template)
-
-## Mantis Pro version
-
-#### Preview
-
-- [Demo](https://mantisdashboard.io)
-
-#### Purchase
-
-- [Buy now](https://mui.com/store/items/mantis-react-admin-dashboard-template/)
+### 문제 해결
 
 ## Table of contents
 
@@ -72,25 +42,6 @@ Mantis offers everything needed to build an advanced dashboard application. In t
 - [More Pro React Templates](#more-premium-react-material-admin-dashboard-templates)
 - [Follow us](#follow-us)
 
-## Getting Started
-
-1. Clone from Github
-
-```
-git clone https://github.com/codedthemes/mantis-free-react-admin-template.git
-```
-
-2. Install packages
-
-```
-yarn
-```
-
-3. Run project
-
-```
-yarn start
-```
 
 ## Documentation
 
@@ -107,33 +58,8 @@ yarn start
 - Code splitting.
 - CSS-in-JS.
 
-## Author
-
-Mantis is managed by team [CodedThemes](https://codedthemes.com).
-
-## Issues
-
-Please generate a [GitHub issue](https://github.com/codedthemes/mantis-free-react-admin-template/issues) if you found a bug in any version. We are try our best to resolve the issue.
-
-## License
-
-- Licensed under [MIT](https://github.com/codedthemes/datta-able-bootstrap-dashboard/blob/master/LICENSE)
-
 ## More Free React Material Admin Dashboard Templates
 
 - [Free Materially](https://codedthemes.com/item/materially-free-reactjs-admin-template/)
 - [Free Berry](https://mui.com/store/items/berry-react-material-admin-free/)
 
-## More premium React Material Admin Dashboard Templates
-
-- [Materially](https://codedthemes.com/item/materially-reactjs-admin-dashboard/)
-- [Berry](https://mui.com/store/items/berry-react-material-admin/)
-
-## Follow us
-
-- Website [https://mantisdashboard.io](https://mantisdashboard.io)
-- Blog [https://blog.mantisdashboard.io](https://blog.mantisdashboard.io)
-- CodedThemes [https://codedthemes.com](https://codedthemes.com)
-- Dribbble [https://dribbble.com/codedthemes](https://dribbble.com/codedthemes)
-- Facebook [https://www.facebook.com/codedthemes](https://www.facebook.com/codedthemes)
-- Twitter [https://twitter.com/codedthemes](https://twitter.com/codedthemes)
