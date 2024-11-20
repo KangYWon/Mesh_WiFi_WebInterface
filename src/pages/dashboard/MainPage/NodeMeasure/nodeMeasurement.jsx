@@ -143,10 +143,10 @@ export default function NodeMeasurement({ }) {
         setIsError(true); // 에러 상태 설정
       });
 
-      // 10초 후 버튼을 다시 활성화
+      // 16초 후 버튼을 다시 활성화
     setTimeout(() => {
       setButtonDisabled(false);
-    }, 10000);
+    }, 16000);
   };
 
   const isNodeSeqValid = (value, nodes) => {
@@ -338,6 +338,7 @@ export default function NodeMeasurement({ }) {
             variant="outlined"
             sx={{ ...clearButtonStyles, flex: 1, margin: '0 4px' }}
             onClick={handleClearResults}
+            disabled={measurementRequested} // 측정 중일 때 비활성화
           >
             Clear Results
           </Button>
