@@ -55,14 +55,14 @@ A web-based application to monitor and manage Mesh WiFi networks with real-time 
     
 ---
 
-## **Documentation**
-   **Find detailed documentation and guidance for this project here:
+##Documentation**
+Find detailed documentation and guidance for this project here:
    Mantis Documentation[https://codedthemes.gitbook.io/mantis]
 
 ---
 
-## **Technology stack
-   **This project utilizes the following technologies:
+##Technology stack
+   This project utilizes the following technologies:
    •	Frontend:
 	   •	React
 	   •	Material UI V5 for UI components
@@ -74,7 +74,7 @@ A web-based application to monitor and manage Mesh WiFi networks with real-time 
 ---
  
 ##Initial React Templates
-    **Explore these free templates to enhance the admin dashboard design:
+    Explore these free templates to enhance the admin dashboard design:
 	 Materially Free ReactJS Admin Template[https://codedthemes.com/item/materially-free-reactjs-admin-template/]
 
 ---
