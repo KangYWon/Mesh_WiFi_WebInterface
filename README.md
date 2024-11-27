@@ -66,7 +66,7 @@ Mantis Documentation[https://codedthemes.gitbook.io/mantis]
 
 ---
 
-## \*\*Technology stack
+## **Technology stack**
 
 This project utilizes the following technologies:
 • Frontend:
@@ -79,14 +79,14 @@ This project utilizes the following technologies:
 
 ---
 
-## \*\*Initial React Templates
+## **Initial React Templates**
 
     Explore these free templates to enhance the admin dashboard design:
      Materially Free ReactJS Admin Template[https://codedthemes.com/item/materially-free-reactjs-admin-template/]
 
 ---
 
-## \*\*Troubleshooting
+## **Troubleshooting**
 
 **Dependency Installation Issues:**
 If dependencies fail to install, run:
