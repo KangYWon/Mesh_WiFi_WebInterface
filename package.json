@@ -3,11 +3,9 @@
   "version": "1.3.0",
   "type": "module",
   "private": true,
-  "homepage": "https://mantisdashboard.io/free",
   "author": {
-    "name": "yewomKang",
-    "email": "22100016@handong.ac.kr",
-    "url": "https://codedthemes.com/"
+    "name": "KANG YEWON",
+    "email": "22100016@handong.ac.kr"
   },
   "scripts": {
     "start": "vite --host 0.0.0.0",

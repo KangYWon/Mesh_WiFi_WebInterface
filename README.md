@@ -3,6 +3,7 @@
 A web-based application to monitor and manage Mesh WiFi networks with real-time topology visualization and performance insights.
 
 ## **Features**
+
 - **Network Performance Monitoring**
   - Measure key metrics: **Latency**, **Throughput**, and **Packet Loss**.
 - **Device Management**
@@ -16,6 +17,7 @@ A web-based application to monitor and manage Mesh WiFi networks with real-time 
 ---
 
 ## **Table of Contents**
+
 1. [Getting Started](#getting-started)
 2. [Documentation](#documentation)
 3. [Technology Stack](#technology-stack)
@@ -27,72 +29,77 @@ A web-based application to monitor and manage Mesh WiFi networks with real-time 
 ## **Getting Started**
 
 ### **Installation Steps**
+
 1. **Clone the Repository**  
-   Clone the project from GitHub:  
+   Clone the project from GitHub:
+
    ```bash
    git clone https://github.com/KangYWon/Mesh_WiFi_WebInterface.git
    ```
 
 2. **Install Dependencies**  
-   Verify Node.js and npm versions:  
+   Verify Node.js and npm versions:
    ```bash
    node -v
    npm -v
    ```
    Install Yarn globally:
-    ```bash
+   ```bash
    npm install -g yarn
    ```
-3. **Run the Project
+3. **Run the Project**
    Start the development server:
    ```bash
    yarn start
    ```
    Alternatively, run with custom host and port:
-    ```bash
+   ```bash
    HOST=0.0.0.0 PORT=3000 yarn start
    ```
-    
+
 ---
 
-##Documentation**
+## **Documentation**
+
 Find detailed documentation and guidance for this project here:
-   Mantis Documentation[https://codedthemes.gitbook.io/mantis]
+Mantis Documentation[https://codedthemes.gitbook.io/mantis]
 
 ---
 
-##Technology stack
-   This project utilizes the following technologies:
-   •	Frontend:
-	   •	React
-	   •	Material UI V5 for UI components
-	   •	React Router for navigation
-	•	State Management: Redux Toolkit
-	•	Build Tools: Vite, Yarn
-	•	Styling: CSS-in-JS, Material Design
+## \*\*Technology stack
+
+This project utilizes the following technologies:
+• Frontend:
+• React
+• Material UI V5 for UI components
+• React Router for navigation
+• State Management: Redux Toolkit
+• Build Tools: Vite, Yarn
+• Styling: CSS-in-JS, Material Design
 
 ---
- 
-##Initial React Templates
+
+## \*\*Initial React Templates
+
     Explore these free templates to enhance the admin dashboard design:
-	 Materially Free ReactJS Admin Template[https://codedthemes.com/item/materially-free-reactjs-admin-template/]
+     Materially Free ReactJS Admin Template[https://codedthemes.com/item/materially-free-reactjs-admin-template/]
 
 ---
 
-##Troubleshooting
+## \*\*Troubleshooting
 
-**Dependency Installation Issues:
-   If dependencies fail to install, run:
-   ```bash
-   yarn install
-   ```
-**Module Not Found: @rollup/rollup-darwin-x64
-   Clean the project and reinstall dependencies:
-   ```bash
-   rm -rf node_modules
-   rm package-lock.json
-   yarn install
-   ```
+**Dependency Installation Issues:**
+If dependencies fail to install, run:
 
-  
-  
+```bash
+yarn install
+```
+
+**Module Not Found: @rollup/rollup-darwin-x64**
+Clean the project and reinstall dependencies:
+
+```bash
+rm -rf node_modules
+rm package-lock.json
+yarn install
+```

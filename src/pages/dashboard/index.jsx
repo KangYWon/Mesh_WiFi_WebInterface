@@ -10,15 +10,15 @@ import Drawer from 'src/layout/Dashboard/Drawer';
 import Header from 'src/layout/Dashboard/Header';
 import Loader from 'components/Loader';
 
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
-
 // import the new containers
 import MapContainer from 'src/pages/dashboard/MainPage/mapContainer.jsx';
 import NodeMeasurement from 'src/pages/dashboard/MainPage/NodeMeasure/nodeMeasurement.jsx';
 import LayerContainer from 'src/pages/dashboard/MainPage/layerContainer.jsx';
-
 import SplitPane from 'react-split-pane';
 
+import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+
+// dashboard page의 Layout 컴포넌트
 // ==============================|| MAIN LAYOUT ||============================== //
 
 export default function DashboardLayout() {

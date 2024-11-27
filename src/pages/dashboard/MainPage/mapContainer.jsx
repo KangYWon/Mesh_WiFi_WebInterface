@@ -5,9 +5,10 @@ import { sendMessage, setOnMessageCallback } from 'src/api/webSocket.js';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-arrowheads';
 import L from 'leaflet'; // Import Leaflet library
-import picture from 'src/assets/images/icons/Layer_Color.png'; // Import the image
+import picture from 'src/assets/images/icons/Layer_Color.png';
 import toggleIcon from 'src/assets/images/icons/nodes2.png';
 
+//지도 컴포넌트 
 // Default center coordinates
 const center = [36.103774, 129.388557];
 
@@ -36,21 +37,12 @@ const CustomControl = ({ toggleImage }) => {
   return null;
 };
 
-const ArrowheadPolyline = ({ positions, initialColor }) => {
+//노드-노드 연결 선
+const ArrowheadPolyline = ({ positions, color }) => {
   const map = useMap();
-  const [color, setColor] = useState(initialColor); // 초기 색상 상태
 
   useEffect(() => {
-    // 함수 내에서 줌 레벨에 따라 색상 및 굵기 변경
-    const updatePolyline = () => {
-      const zoom = map.getZoom();
-      const newColor = zoom > 14 ? 'black' : 'black'; // 줌 레벨에 따른 색상 설정 (일단 둘다 검정으로 해둠 )
-      const newWeight = zoom > 14 ? 0.01 : 2; // 줌 레벨에 따른 굵기 설정
-
-      setColor(newColor); // 색상 상태 업데이트
-
-      // 기존 폴리라인 제거 후 새로 그리기
-      const polyline = L.polyline(positions, { color: newColor, weight: newWeight }).addTo(map);
+      const polyline = L.polyline(positions, { color }).addTo(map);
       const arrowheads = L.polyline(positions, { color: newColor })
         .arrowheads({ size: '15px', frequency: 'end', yawn: 60 })
         .addTo(map);
@@ -60,21 +52,7 @@ const ArrowheadPolyline = ({ positions, initialColor }) => {
         map.removeLayer(polyline);
         map.removeLayer(arrowheads);
       };
-    };
-
-    // 초기 폴리라인 생성
-    const cleanup = updatePolyline();
-
-    // 줌 레벨이 변경될 때마다 폴리라인 및 굵기 업데이트
-    map.on('zoomend', updatePolyline);
-
-    // 컴포넌트 언마운트 시 이벤트 제거 및 레이어 삭제
-    return () => {
-      map.off('zoomend', updatePolyline);
-      cleanup();
-    };
-  }, [map, positions]);
-
+  }, [map, positions, color]);
   return null;
 };
 
@@ -119,7 +97,7 @@ const MapContainerComponent = () => {
     const handleWebSocketMessage = (message) => {
       if (message.type === 'fetch_gps') {
         const nodeDataFromServer = message.data;
-
+        //임의로 담은 GPS 정보 
         // if (nodeDataFromServer.length > 0) {
         //   nodeDataFromServer[0].latitude = 36.10347;
         //   nodeDataFromServer[0].longitude = 129.3864;
@@ -139,11 +117,11 @@ const MapContainerComponent = () => {
         //   nodeDataFromServer[5].latitude = 36.10336; 
         //   nodeDataFromServer[5].longitude = 129.3863;
 
-        // //   nodeDataFromServer[6].latitude = 36.10324; 
-        // //   nodeDataFromServer[6].longitude = 129.3884;
+        //   nodeDataFromServer[6].latitude = 36.10324; 
+        //   nodeDataFromServer[6].longitude = 129.3884;
 
-        // //   nodeDataFromServer[7].latitude = 36.10289; 
-        // //   nodeDataFromServer[7].longitude = 129.3881;
+        //   nodeDataFromServer[7].latitude = 36.10289; 
+        //   nodeDataFromServer[7].longitude = 129.3881;
 
         // }
         
@@ -180,7 +158,8 @@ const MapContainerComponent = () => {
             setOpenedPopupNode={setOpenedPopupNode}
             layerColors={layerColors}
           />
-        ))}
+        ))} 
+        {/* 지도 상에 그려지는 노드 - 노드의 연결 선 부분 주석처리 */}
         {/* {connections.map((conn) => {
           const fromNode = nodes.find(node => node.my_mac === conn.from);
           const toNode = nodes.find(node => node.my_mac === conn.to);

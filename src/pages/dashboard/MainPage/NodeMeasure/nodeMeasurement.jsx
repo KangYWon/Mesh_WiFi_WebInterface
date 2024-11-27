@@ -184,28 +184,7 @@ export default function NodeMeasurement({ }) {
       console.error('Error stopping measurement:', error);
     }
   };
-  //   try {
-  //     sendMessage('cancel_measurement', {
-  //       type: 'cancel_measurement',
-  //       source: source.seq.toString(), // seq 값만 전송
-  //       destination: destination.seq.toString() // seq 값만 전송
-  //     });
-      
-  //     console.log('Measurement stopped.');
-  //     setMeasurementRequested(false);
-  //     setIsError(false);
-
-  //     if (!isStopMeasurementClicked) {
-  //       // Stop Measurement 로직 추가
-  //       setIsStopMeasurementClicked(true);
-  //     }
-
-  //   } catch (error) {
-  //     console.error('Error stopping measurement:', error);
-  //     setIsError(true); 
-  //   }
-  // };
-
+ 
   // Autocomplete 노드 선택 옵션 설정
   const nodeOptions = nodes.map(node => ({
     label: `Node ${node.seq}`,  // 보여지는 옵션
@@ -294,12 +273,12 @@ export default function NodeMeasurement({ }) {
         <Box
           sx={{
             marginTop: 1,
-            padding: 1.5, // 상자 내부 패딩 줄이기
+            padding: 1.5, 
             border: '1px solid red',
             backgroundColor: '#fdd',
-            maxWidth: '100%', // 상자의 최대 너비 설정
-            fontSize: '0.87rem', // 글자 크기 조정
-            wordWrap: 'break-word' // 긴 단어가 상자를 넘지 않도록 처리
+            maxWidth: '100%', 
+            fontSize: '0.87rem', 
+            wordWrap: 'break-word' 
           }}
         >
           <h3 style={{ marginBottom: '4px' }}>Error</h3> {/* h3의 하단 마진을 줄임 */}

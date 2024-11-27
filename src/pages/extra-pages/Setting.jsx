@@ -11,7 +11,7 @@ import MainCard from 'components/MainCard';
 // README 내용을 문자열로 정의
 const readmeContent = `
 # **Web Interface-Based Mesh WiFi Network Management Tool**
-
+---
 A web-based application to monitor and manage Mesh WiFi networks with real-time topology visualization and performance insights.
 
 ## **Features**
@@ -28,15 +28,15 @@ A web-based application to monitor and manage Mesh WiFi networks with real-time 
 ---
 
 ## **Table of Contents**
-1. [Getting Started](#getting-started)
-2. [Documentation](#documentation)
-3. [Technology Stack](#technology-stack)
-4. [Initial React Templates](#initial-react-templates)
-5. [Troubleshooting](#troubleshooting)
+1. Getting Started
+2. Documentation
+3. Technology Stack
+4. Initial React Templates
+5. Troubleshooting
 
 ---
 
-## **Getting Started**
+## **1. Getting Started**
 
 ### **Installation Steps**
 1. **Clone the Repository**  
@@ -52,7 +52,7 @@ A web-based application to monitor and manage Mesh WiFi networks with real-time 
    npm -v
    \`\`\`
    Install Yarn globally:
-    \`\`\`bash
+   \`\`\`bash
    npm install -g yarn
    \`\`\`
 
@@ -62,18 +62,18 @@ A web-based application to monitor and manage Mesh WiFi networks with real-time 
    yarn start
    \`\`\`
    Alternatively, run with custom host and port:
-    \`\`\`bash
+   \`\`\`bash
    HOST=0.0.0.0 PORT=3000 yarn start
    \`\`\`
 ---
 
-## **Documentation**
-Find detailed documentation and guidance for this project here:  
+## **2. Documentation**
+**Find detailed documentation and guidance for this project here:**
 [Mantis Documentation](https://codedthemes.gitbook.io/mantis)
 
 ---
 
-## **Technology Stack**
+## **3. Technology Stack**
 This project utilizes the following technologies:  
 - **Frontend**:  
   - React  
@@ -85,13 +85,13 @@ This project utilizes the following technologies:
 
 ---
 
-## **Initial React Templates**
-Explore these free templates to enhance the admin dashboard design:  
+## **4. Initial React Templates**
+**Explore these free templates to enhance the admin dashboard design:**
 [Materially Free ReactJS Admin Template](https://codedthemes.com/item/materially-free-reactjs-admin-template/)
 
 ---
 
-## **Troubleshooting**
+## **5. Troubleshooting**
 
 ### Dependency Installation Issues
 If dependencies fail to install, run:  
@@ -106,6 +106,8 @@ rm -rf node_modules
 rm package-lock.json
 yarn install
 \`\`\`
+
+---
 `;
 
 // ==============================|| SAMPLE PAGE ||============================== //

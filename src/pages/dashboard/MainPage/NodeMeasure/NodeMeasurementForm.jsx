@@ -25,14 +25,11 @@ const NodeMeasurementForm = ({ onMeasurementStart, onClearInputs, onClearResults
       }
     };
 
-    // WebSocket 메시지 핸들러 설정
     setOnMessageCallback(handleWebSocketMessage);
-
-    // WebSocket 연결이 열리면 초기화 메시지를 보냅니다.
     sendMessage('fetch_node', { type: 'fetch_node' });
 
     return () => {
-      setOnMessageCallback(null); // 컴포넌트 언마운트 시 콜백 제거
+      setOnMessageCallback(null); 
     };
   }, []);
 

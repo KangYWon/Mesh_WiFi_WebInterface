@@ -10,7 +10,6 @@ const AnalyticsPage = Loadable(lazy(() => import('pages/dashboard/Analytics/Anal
 const SettingPage = Loadable(lazy(() => import('src/pages/extra-pages/Setting')));
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
 const ImagePage = Loadable(lazy(() => import('pages/dashboard/Image/ImagePage.jsx')));
-const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -32,15 +31,6 @@ const MainRoutes = {
       ]
     },
     {
-      path: 'sample-page',
-      element: <SamplePage />
-    },
-    // add device 경로
-    {
-      path: 'setting',
-      element: <SettingPage />
-    },
-    {
       path: 'register',
       element: <RegisterDevice />
     },
@@ -51,7 +41,11 @@ const MainRoutes = {
     {
       path: 'image',
       element: <ImagePage />
-    }
+    },
+    {
+      path: 'setting',
+      element: <SettingPage />
+    },
   ]
 };
 

@@ -26,23 +26,22 @@ const LayerContainer = () => {
 
         // WebSocket 메시지 핸들러 설정
         setOnMessageCallback(handleWebSocketMessage);
-
-        // WebSocket 연결이 열리면 초기화 메시지를 보냅니다.
+        // WebSocket 연결이 열리면 초기화 메시지 보냄.
         sendMessage('fetch_node', { type: 'fetch_node' });
 
         return () => {
-            setOnMessageCallback(null); // 컴포넌트 언마운트 시 콜백 제거
+            setOnMessageCallback(null); 
         };
     }, []);
 
-    // 트리 데이터를 변환하는 함수
+    // 트리 데이터로 변환하는 함수
     const transformDataForD3 = (nodesData) => {
         const root = {
             name: 'Router',
             children: []
         };
 
-        // 각 노드를 저장할 맵 (효율적인 검색을 위해)
+        // 각 노드를 저장할 맵
         const nodeMap = {};
 
         nodesData.forEach((node) => {
